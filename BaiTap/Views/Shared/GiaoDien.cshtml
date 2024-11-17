@@ -1,0 +1,273 @@
+﻿@model IEnumerable<BaiTap.Models.SanPham>
+
+
+<head>
+    <style>
+        .Timkiem {
+            width: 250px;
+            text-align: center;
+        }
+    </style>
+</head>
+<link href="~/Content/assets/css/modaLocSP.css" rel="stylesheet" />
+<main id="main" class="main" style="width:100%">
+
+    <div class="pagetitle">
+        <h1>Dashboard</h1>
+        <nav>
+            <ol class="breadcrumb">
+               
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+    <div class="Timkiem">
+        <form action="@Url.Action("TimKiem", "TimKiem")" method="get">
+            <div class="input-group">
+                <input type="text"
+                       class="form-control"
+                       name="name"
+                       placeholder="Tim kiem..." />
+                <button type="submit" value="Tim">
+                    <div class="input-group-append">
+                        <span class="input-group-text bg-transparent text-primary">
+                            <i class="fa fa-search"></i>
+                        </span>
+                    </div>
+                </button>
+            </div>
+        </form>
+    </div>
+    <br />
+    <div class="container" style="padding-left:10px">
+        <!-- Button đăng nhập để mở form đăng nhập -->
+        <button id="myBtn">Loc san pham</button>
+
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+            <!-- Nội dung form đăng nhập -->
+            <div class="modal-content">
+                <form action="#">
+                    <span class="close">&times;</span>
+                    <div class="modal-body">
+                        @using (Html.BeginForm("LocSP", "TimKiem", FormMethod.Get))
+                        {
+                            <div id="filterForm">
+                                <div class="form-group">
+                                    <label for="tenSanPham">Tên Sản Phẩm</label>
+                                    <input type="text" class="form-control" id="tenSanPham" name="name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="giaTu">Giá Từ</label>
+                                    <input type="number" class="form-control" id="giaTu" name="from">
+                                </div>
+                                <div class="form-group">
+                                    <label for="giaDen">Giá Đến</label>
+                                    <input type="number" class="form-control" id="giaDen" name="to">
+                                </div>
+                                <div class="form-group">
+                                    <label for="danhMuc">Danh Mục</label>
+                                    @{
+                                        BaiTap.Models.Model1 db = new BaiTap.Models.Model1();
+                                        var DM = db.DanhMuc.ToList();
+                                    }
+                                    <select name="idDM" class="form-control">
+                                        @foreach (var item in DM)
+                                        {
+                                            <option value="@item.DanhMucID">@item.TenDanhMuc</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="hang">Hãng</label>
+                                    @{
+                                        var Hangs = db.Hang.ToList();
+                                    }
+                                    <select name="idHang" class="form-control">
+                                        @foreach (var item in Hangs)
+                                        {
+                                            <option value="@item.HangID">@item.TenHang</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <p>Sắp xếp theo</p>
+                                    @Html.DropDownList("sapXep", new SelectList(new[]
+                                                 {
+                                        new SelectListItem { Text = "Giá Tăng Dần", Value = "Giatang" },
+                                        new SelectListItem { Text = "Giá Giảm Dần", Value = "Giagiam" }
+                                    }, "Value", "Text"), new { @class = "form-control" })
+                                </div>
+                                <button type="submit" class="btn btn-primary">Áp Dụng</button>
+                            </div>
+
+                          }
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div>
+        <table>
+            <tr>
+                <th>
+                    Sắp xếp theo
+                </th>
+                <th style="padding-left:50px">
+                    @Html.ActionLink("Ban chay", "Banchay1", "TimKiem")
+                </th>
+                <th style="padding-left:50px">
+                    <a href="#">Mới</a>
+                </th>
+                <th style="padding-left:50px">
+                    @Html.ActionLink("Gia tang dan", "GiaTang", "TimKiem")
+                </th>
+                <th style="padding-left:50px">               
+                    @Html.ActionLink("Gia Giam dan", "GiaGiam","TimKiem")
+
+                </th>
+            </tr>
+        </table>
+
+    </div>
+
+    <br />
+    <section class="section dashboard">
+        <div class="row">
+            <!-- Left side columns tim de thay doi chieu rong cua giao dien ben phai -->
+            <div class="col-lg-8" style="width:1200px">
+
+                <div class="row">
+
+                    <!-- Recent Sales -->
+                    <div class="col-12">
+                        <div class="card recent-sales overflow-auto">
+
+                            <div class="filter">
+                                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                    <li class="dropdown-header text-start">
+                                        <h6>Filter</h6>
+                                    </li>
+
+                                    <li><a class="dropdown-item" href="#">Today</a></li>
+                                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                                </ul>
+                            </div>
+
+                            <div class="card-body">
+                                <h5 class="card-title">Recent Sales <span>| Today</span></h5>
+
+                                <table class="table table-borderless datatable" style="font-size: 14px">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                @Html.DisplayNameFor(n => n.TenSanPham)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(n => n.Soluong)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(n => n.SoLuongDaBan)
+                                            </th>
+
+                                            <th>
+                                                @Html.DisplayNameFor(n => n.Gia)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(n => n.TongDoanhThu)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(n => n.HangID)
+                                            </th>
+                                            <th>
+                                                @Html.DisplayNameFor(n => n.DanhMucID)
+                                            </th>
+
+                                            <th>
+                                                @Html.DisplayNameFor(n => n.HinhAnh)
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.TenSanPham)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Soluong)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.SoLuongDaBan)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Gia)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.TongDoanhThu)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.HangID)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.DanhMucID)
+                                                </td>
+
+                                                <td>
+                                                    <img src="@item.HinhAnh" alt="Hình ảnh sản phẩm" width="100" height="100" />
+                                                <td>
+
+                                                    @Html.ActionLink("Sửa", "Sua", new { id = item.SanPhamID }) |
+
+                                                    @Html.ActionLink("Chi tiết", "XemChiTiet", new { id = item.SanPhamID }, null) |
+
+                                                    @Html.ActionLink("Xóa", "Xoa", new { id = item.SanPhamID })
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+   @Html.ActionLink("Them san pham moi", "ThemSanPham", "QuanLySanPham", new { area = "" }, new { @class = "nav-link" })
+</main><!-- End #main -->
+<script>
+    // lấy phần Modal
+    var modal = document.getElementById('myModal');
+
+    // Lấy phần button mở Modal
+    var btn = document.getElementById("myBtn");
+
+    // Lấy phần span đóng Modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // Khi button được click thi mở Modal
+    btn.onclick = function () {
+        modal.style.display = "block";
+    }
+
+    // Khi span được click thì đóng Modal
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    // Khi click ngoài Modal thì đóng Modal
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>

@@ -1,0 +1,137 @@
+﻿@model BaiTap.Models.KhuyenMai
+
+@{
+    ViewBag.Title = "Tạo Khuyến Mãi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Tạo Khuyến Mãi</h2>
+
+<main id="main" class="main" style="width:100%">
+
+    <div class="pagetitle">
+        <h1>Dashboard</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section dashboard">
+        <div class="row">
+            <div class="col-lg-8" style="width:1200px">
+                <h2>Tạo Khuyến Mãi</h2>
+                @using (Html.BeginForm("TaoKhuyenMai", "QuanLyKhuyenMai", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TenKhuyenMai, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.TenKhuyenMai, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.TenKhuyenMai, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Mota, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.TextAreaFor(model => model.Mota, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Mota, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.NgayBD, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.NgayBD, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                            @Html.ValidationMessageFor(model => model.NgayBD, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.NgayKT, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.NgayKT, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                            @Html.ValidationMessageFor(model => model.NgayKT, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Soluong, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Soluong, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Soluong, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                      <button id="myBtn">Them dieu kien</button>
+                      <div id="myModal" class="modal">
+                          <div class="modal-content">
+                              <form action="#">
+                                  <span class="close">&times;</span>
+                                  <div class="modal-body">
+                                      <div class="form-group">
+                                          <label for="GiaTriToiThieu" class="control-label">Giá trị tối thiểu đơn hàng:</label>
+                                          <input type="number" class="form-control" id="GiaTriToiThieu" />
+                                      </div>
+                                      <div class="form-group">
+                                          <label for="SanPham" class="control-label">Chọn sản phẩm:</label>
+                                          <select class="form-control" id="SanPham">
+                                              <!-- Populate with products -->
+                                          </select>
+                                      </div>
+                                      <div class="form-group">
+                                          <label for="GiaTriDoiDiem" class="control-label">Giá trị khuyến mãi:</label>
+                                          <input type="number" class="form-control" id="GiaTriDoiDiem" />
+                                      </div>
+                                      <div class="form-group">
+                                          <label for="DiemDoiDiem" class="control-label">Điểm đổi:</label>
+                                          <input type="number" class="form-control" id="DiemDoiDiem" />
+                                      </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                      <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                                      <button type="button" class="btn btn-primary" id="saveConditionBtn">Lưu Điều Kiện</button>
+                                  </div>
+                              </form>
+                          </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Tạo Khuyến Mãi" class="btn btn-primary" />
+                        </div>
+                    </div>
+                }
+
+                <!-- Modal for Conditions -->
+              
+                
+            </div>
+        </div>
+    </section>
+</main>
+<script>
+    var modal = document.getElementById('myModal')
+
+    var btn = document.getElementById('myBnt')
+
+    var span = document.getElementsByClassName('close')[0]
+
+    btn.onclick = function () {
+        modal.style.display = "block";
+    }
+
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+    span.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>

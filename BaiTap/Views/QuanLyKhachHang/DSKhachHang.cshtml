@@ -1,0 +1,62 @@
+﻿
+@model IEnumerable<BaiTap.Models.KhachHang>
+
+@{
+    ViewBag.Title = "Quản lý khach hang";
+}
+<h3>Danh sách khách hàng</h3>
+<main id="main" class="main" style="width:100%">
+
+    <div class="pagetitle">
+        <h1>Dashboard</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section dashboard">
+        <div class="row">
+            <div class="col-lg-8" style="width:1200px">
+                <table class="table">
+                    <tr>
+                        <th>Mã khách hàng</th>
+                        <th>Họ tên khách hàng</th>
+                        <th>Số điện thoại</th>
+                        <th>Điểm tích lũy</th>
+
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.KhachHangID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.HoTen)
+                            </td>
+    
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SoDienThoai)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DiemTichLuy)
+                            </td>
+                            <td>                              
+                                @Html.ActionLink("xem chi tiết", "ChiTietKH", new { id = item.KhachHangID }) 
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+       
+    </section>
+
+</main>
+
+
+

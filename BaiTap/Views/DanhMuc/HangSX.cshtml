@@ -1,0 +1,92 @@
+﻿@model  BaiTap.Models.DanhMuc
+@{
+    ViewBag.Title = "HangSX";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Dashboard</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+   
+    <section class="section dashboard">
+        <div class="row">
+            <!-- Left side columns tim de thay doi chieu rong cua giao dien ben phai -->
+            <div class="col-lg-8" style="width:1200px">
+
+                <div class="row">
+
+                    <!-- Recent Sales -->
+                    <div class="col-12">
+                        <div class="card recent-sales overflow-auto">
+                            <div class="filter">
+                                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                    <li class="dropdown-header text-start">
+                                        <h6>Filter</h6>
+                                    </li>
+
+                                    <li><a class="dropdown-item" href="#">Today</a></li>
+                                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                                </ul>
+                            </div>
+                            @foreach (var item in Model.TenDanhMuc)
+                            {
+                                
+                            }
+
+
+                            <div class="card-body">
+
+
+                                <table class="table table-borderless datatable" style="font-size: 14px">
+
+                                    <tr>
+                                        <th>
+                                            Ten hang san xuat
+                                        </th>
+                                        <th>
+                                            Ma hang san xuat
+                                        </th>
+                                        <th></th>
+                                    </tr>
+
+                                    @foreach (var item in Model.Hang)
+                                    {
+                                        <tr>
+                                           
+                                            <td>
+                                                @item.TenHang
+                                            </td>
+                                            <td>
+                                                @item.HangID
+                                            </td>
+                                            <td>
+                                                @Html.ActionLink("Edit", "Edit", new { id = item.HangID }) |
+                                                @Html.ActionLink("Details", "Details", new { id = item.HangID }) |
+                                                @Html.ActionLink("Delete", "Delete", new { id = item.HangID })
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </table>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+</main><!-- End #main -->

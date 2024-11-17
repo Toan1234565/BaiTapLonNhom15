@@ -1,0 +1,215 @@
+﻿@model BaiTap.Models.PhieuNhapKhoViewModel
+@{
+    ViewBag.Title = "NhapKho";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Phieu nhap hang</h2>
+
+<head>
+    <style>
+        .col-md-10{
+            width:300px;
+        }
+        .form-control{
+            width:300px;
+        }
+    </style>
+</head>
+
+<main id="main" class="main" style="width:100%">
+    <section class="section dashboard">
+        <div class="row">
+            <!-- Left side columns tim de thay doi chieu rong cua giao dien ben phai -->
+            <div class="col-lg-8" style="width:1200px">
+
+                <div class="row">
+
+                    <!-- Recent Sales -->
+                    <div class="col-12">
+                        <div class="card recent-sales overflow-auto">
+
+                            <div class="filter">
+                                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                    <li class="dropdown-header text-start">
+                                        <h6>Filter</h6>
+                                    </li>
+
+                                    <li><a class="dropdown-item" href="#">Today</a></li>
+                                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                                </ul>
+                            </div>
+
+                            <div class="card-body">
+                                <h5 class="card-title">Recent Sales <span>| Today</span></h5>
+                                @using (Html.BeginForm("NhapKho", "QuanLyTonKho", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                {
+                                    BaiTap.Models.Model1 db = new BaiTap.Models.Model1();
+                                    @Html.AntiForgeryToken()
+                                    <hr />
+
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.SanPham.TenSanPham, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        <div class="col-md-10">
+                                            @Html.EditorFor(model => model.SanPham.TenSanPham, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.SanPham.TenSanPham, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.TonKho.SoLuongTon, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        <div class="col-md-10">
+                                            @Html.EditorFor(model => model.TonKho.SoLuongTon, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.TonKho.SoLuongTon, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.SanPham.MoTa, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        <div class="col-md-10">
+                                            @Html.EditorFor(model => model.SanPham.MoTa, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.SanPham.MoTa, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.SanPham.Gia, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        <div class="col-md-10">
+                                            @Html.EditorFor(model => model.SanPham.Gia, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.SanPham.Gia, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.SanPham.DanhMucID, "DanhMucID", htmlAttributes: new { @class = "control-label col-md-2" })
+                                        <div class="col-md-10">
+                                            @{
+
+                                                var DM = db.DanhMuc.ToList();
+                                            }
+                                            <select name="DanhMucID">
+                                                @foreach (var item in DM)
+                                                {
+                                                    <option value="@item.DanhMucID" )>@item.TenDanhMuc</option>
+                                                }
+                                            </select>
+                                            @Html.ValidationMessageFor(model => model.SanPham.DanhMucID, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+
+                                        @Html.LabelFor(model => model.SanPham.HangID, "HangID", htmlAttributes: new { @class = "control-label col-md-2" })
+                                        <div class="col-md-10">
+                                            @{
+                                                var Hang = db.Hang.ToList();
+                                            }
+                                            <select name="HangID">
+
+                                                @foreach (var item in Hang)
+                                                {
+                                                    <option value="@item.HangID" )>@item.TenHang</option>
+
+                                                }
+                                            </select>
+                                            @Html.ValidationMessageFor(model => model.SanPham.HangID, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.SanPham.HinhAnh, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        <div class="col-md-10">
+                                            <input type="file" name="HinhAnh" class="form-control" />
+                                            @Html.ValidationMessageFor(model => model.SanPham.HinhAnh, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ChiTietSanPham.ManHinh, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        <div class="col-md-10">
+                                            @Html.TextAreaFor(model => model.ChiTietSanPham.ManHinh, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.ChiTietSanPham.ManHinh, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ChiTietSanPham.HeDieuHanh, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        <div class="col-md-10">
+                                            @Html.TextAreaFor(model => model.ChiTietSanPham.HeDieuHanh, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.ChiTietSanPham.HeDieuHanh, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ChiTietSanPham.CameraTruoc, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        <div class="col-md-10">
+                                            @Html.TextAreaFor(model => model.ChiTietSanPham.CameraTruoc, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.ChiTietSanPham.CameraTruoc, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ChiTietSanPham.CameraSau, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        <div class="col-md-10">
+                                            @Html.TextAreaFor(model => model.ChiTietSanPham.CameraSau, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.ChiTietSanPham.CameraSau, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ChiTietSanPham.Chip, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        <div class="col-md-10">
+                                            @Html.TextAreaFor(model => model.ChiTietSanPham.Chip, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.ChiTietSanPham.Chip, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ChiTietSanPham.RAM, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        <div class="col-md-10">
+                                            @Html.TextAreaFor(model => model.ChiTietSanPham.RAM, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.ChiTietSanPham.RAM, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ChiTietSanPham.BoNhoTrong, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        <div class="col-md-10">
+                                            @Html.TextAreaFor(model => model.ChiTietSanPham.BoNhoTrong, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.ChiTietSanPham.BoNhoTrong, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ChiTietSanPham.Sim, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        <div class="col-md-10">
+                                            @Html.TextAreaFor(model => model.ChiTietSanPham.Sim, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.ChiTietSanPham.Sim, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ChiTietSanPham.Pin, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        <div class="col-md-10">
+                                            @Html.TextAreaFor(model => model.ChiTietSanPham.Pin, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.ChiTietSanPham.Pin, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <br />
+                                    <div class="form-group">
+                                        <div class="col-md-offset-2 col-md-10">
+                                            <button type="submit" class="btn btn-default">Lưu</button>
+                                        </div>
+                                    </div>
+                                }
+                                
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+</main><!-- End #main -->

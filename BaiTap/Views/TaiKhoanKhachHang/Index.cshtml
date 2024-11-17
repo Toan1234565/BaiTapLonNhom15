@@ -1,0 +1,65 @@
+﻿@model IEnumerable<BaiTap.Models.TaiKhoanKH>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main id="main" class="main" style="width:100%">
+    <div class="pagetitle">
+        <h1>Dashboard</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section dashboard">
+        <div class="row">
+            <div class="col-lg-8" style="width:1200px">
+                <table class="table">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.KhachHangID)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.TenDangNhap)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.MatKhau)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.TrangThai)
+                        </th>
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.KhachHangID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TenDangNhap)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.MatKhau)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TrangThai)
+                            </td>
+                            <td>
+                                @Html.ActionLink("Xoa ", "Delete", new { id = item.TaiKhoanID }) |
+                                @Html.ActionLink("Đơn hàng", "ChiTiet", new { id = item.TaiKhoanID }) |
+
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+                </div>
+            </div>
+        </section>
+        </main>

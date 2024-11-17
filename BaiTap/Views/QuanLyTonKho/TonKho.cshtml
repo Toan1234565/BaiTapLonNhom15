@@ -1,0 +1,24 @@
+﻿@model IEnumerable<BaiTap.Models.TonKho>
+
+<h2>Product Inventory</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>Quantity in Stock</th>
+            <th>Last Updated</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.SanPhamID</td>
+                <td>@item.SanPham.TenSanPham</td>
+                <td>@item.SoLuongTon</td>
+                <td>@item.NgayCapNhat</td>
+            </tr>
+        }
+    </tbody>
+</table>

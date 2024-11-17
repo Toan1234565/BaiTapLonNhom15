@@ -1,0 +1,46 @@
+﻿@model IEnumerable<BaiTap.Models.TonKho>
+
+@{
+    ViewBag.Title = "GetTonKhos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>GetTonKhos</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.SanPhamID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SoLuongTon)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NgayCapNhat)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.SanPhamID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SoLuongTon)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NgayCapNhat)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.TonKhoID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.TonKhoID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.TonKhoID })
+        </td>
+    </tr>
+}
+
+</table>

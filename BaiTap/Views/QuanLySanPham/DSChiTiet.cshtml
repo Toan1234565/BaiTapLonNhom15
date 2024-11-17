@@ -1,0 +1,140 @@
+﻿@model IEnumerable<BaiTap.Models.ChiTietSanPham>
+
+@{
+    ViewBag.Title = "DSChiTiet";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>DSChiTiet</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+
+
+
+
+<h2>Sua thong tin san pham</h2>
+<main id="main" class="main" style="width:100%">
+
+    <div class="pagetitle">
+        <h1>Dashboard</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+        </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+        <div class="row">
+            <!-- Left side columns  -->
+            <div class="col-lg-8" style="width:1200px">
+
+                <div class="row">
+
+                    <!-- Recent Sales -->
+                    <div class="col-12">
+                        <div class="card recent-sales overflow-auto">
+
+                            <div class="filter">
+                                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                                    <li class="dropdown-header text-start">
+                                        <h6>Filter</h6>
+                                    </li>
+
+                                    <li><a class="dropdown-item" href="#">Today</a></li>
+                                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                                </ul>
+                            </div>
+
+                            <div class="card-body">
+                                <h5 class="card-title">Recent Sales <span>| Today</span></h5>
+
+                                <table class="table">
+                                    <tr>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.SanPhamID)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.ManHinh)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.HeDieuHanh)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.CameraTruoc)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.CameraSau)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Chip)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.RAM)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.BoNhoTrong)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Sim)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Pin)
+                                        </th>
+                                        <th></th>
+                                    </tr>
+
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.SanPhamID)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.ManHinh)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.HeDieuHanh)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CameraTruoc)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CameraSau)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Chip)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.RAM)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BoNhoTrong)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Sim)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Pin)
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+</main><!-- End #main -->

@@ -1,0 +1,37 @@
+﻿@model BaiTap.Models.PhieuNhapKhoViewModel
+<h2>SanPhamTonKho</h2>
+
+
+<main id="main" class="main" style="width:100%">
+
+    <div class="pagetitle">
+        <h1>Dashboard</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+        </nav>
+    </div>
+<section class="section dashboard">
+    <div class="row">
+        <div class="col-lg-8" style="width:1200px">
+            @using (Html.BeginForm("Nhap", "QuanLyTonKho", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-group" style="width:200px">
+                    @Html.LabelFor(m => m.SanPhamID)
+                    @Html.TextBoxFor(m => m.SanPhamID, new { @class = "form-control" })
+                </div>
+                <br />
+
+                <button type="submit" class="btn btn-primary">Tiếp tục</button>
+
+            }
+        </div>
+        </div>
+
+    </section>
+
+</main>

@@ -1,0 +1,96 @@
+﻿@model IEnumerable<BaiTap.Models.KhuyenMai>
+
+@{
+    ViewBag.Title = "DSKhuyenMai";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>DSKhuyenMai</h2>
+
+
+<main id="main" class="main" style="width:100%">
+
+    <div class="pagetitle">
+        <h1>Dashboard</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section dashboard">
+        <div class="row">
+            <div class="col-lg-8" style="width:1200px">
+                <table class="table">
+                    <tr>
+                        <th>
+                            Tên khuyến mãi
+                        </th>
+                        <th>
+                            mô tả
+                        </th>
+                        <th>
+                            ngày bắt đầu
+                        </th>
+                        <th>
+                            ngày kết thúc
+                        </th>
+                       
+                        <th>
+                           Giá trị(%)
+                        </th>
+                        <th>
+                            điều kiện
+                        </th>
+                        <th>
+                           Số lượng
+                        </th>
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TenKhuyenMai)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Mota)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.NgayBD)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.NgayKT)
+                            </td>                       
+                            <td>
+                                @Html.DisplayFor(modelItem => item.GiaTri)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DieuKien)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Soluong)
+                            </td>
+                            <td>
+                                @Html.ActionLink("sửa", "SuaKhuyenMai", new { id = item.KhuyenMaiID }) |
+                                @Html.ActionLink("Xóa", "XoaKhuyenMai", new { id = item.KhuyenMaiID }) |
+                                @Html.ActionLink("chi tiet","ChiTietKhuyenMai", new {id = item.KhuyenMaiID})
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+
+            </div>
+        </div>
+        <div class="form-actions no-color">
+            <a href="@Url.Action("TaoKhuyenMai","QuanLyKhuyenMai")" class="btn btn-default">Tao khuyen mai moi</a>
+        </div>
+    </section>
+
+</main>
+
+
+
