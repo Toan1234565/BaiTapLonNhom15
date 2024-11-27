@@ -196,12 +196,12 @@
     <Compile Include="Controllers\BaoCaoDoanhThuController.cs" />
     <Compile Include="Controllers\CanhBaoController.cs" />
     <Compile Include="Controllers\DanhMucController.cs" />
-    <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\HangSXController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\QuanLyDonHangController.cs" />
     <Compile Include="Controllers\QuanLyKhachHangController.cs" />
     <Compile Include="Controllers\QuanLyKhuyenMaiController.cs" />
+    <Compile Include="Controllers\QuanLySanPhamAPIController.cs" />
     <Compile Include="Controllers\QuanLySanPhamController.cs" />
     <Compile Include="Controllers\QuanLyTonKhoAPIController.cs" />
     <Compile Include="Controllers\QuanLyTonKhoController.cs" />
