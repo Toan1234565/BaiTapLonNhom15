@@ -74,9 +74,9 @@
                                 @Html.DisplayFor(modelItem => item.Soluong)
                             </td>
                             <td>
-                                @Html.ActionLink("sửa", "SuaKhuyenMai", new { id = item.KhuyenMaiID }) |
+                                @Html.ActionLink("sửa", "SuaKM", new { id = item.KhuyenMaiID }) |
                                 @Html.ActionLink("Xóa", "XoaKhuyenMai", new { id = item.KhuyenMaiID }) |
-                                @Html.ActionLink("chi tiet","ChiTietKhuyenMai", new {id = item.KhuyenMaiID})
+                                @Html.ActionLink("chi tiet","ChiTietKM", new {id = item.KhuyenMaiID})
                             </td>
                         </tr>
                     }

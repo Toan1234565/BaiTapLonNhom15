@@ -1,7 +1,7 @@
 ﻿@model BaiTap.Models.KhuyenMai
 
 @{
-    ViewBag.Title = "Tạo Khuyến Mãi";
+    ViewBag.Title = "Sửa Khuyến Mãi";
 }
 
 <h2 class="text-center">@ViewBag.Title</h2>
@@ -9,9 +9,11 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            @using (Html.BeginForm("TaoKhuyenMai", "QuanLyKhuyenMai", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            @using (Html.BeginForm("SuaKM", "QuanLyKhuyenMai", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
             {
                 @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.KhuyenMaiID)
+
                 <div class="form-group">
                     @Html.LabelFor(model => model.TenKhuyenMai, htmlAttributes: new { @class = "control-label col-md-4" })
                     <div class="col-md-8">
@@ -94,7 +96,7 @@
 
                 <div class="form-group">
                     <div class="col-md-offset-4 col-md-8">
-                        <input type="submit" value="Tạo mới" class="btn btn-primary" />
+                        <input type="submit" value="Lưu thay đổi" class="btn btn-primary" />
                     </div>
                 </div>
             }

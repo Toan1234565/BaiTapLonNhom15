@@ -1,72 +1,59 @@
 ﻿@model BaiTap.Models.TaiKhoanKH
 
 @{
-    ViewBag.Title = "Delete";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Xóa tài khoản khách hàng";
 }
-<main id="main" class="main" style="width:100%">
-    <div class="pagetitle">
-        <h1>Dashboard</h1>
-        <nav>
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                <li class="breadcrumb-item active">Dashboard</li>
-            </ol>
-        </nav>
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    dl {
+        text-align: left;
+        font-size: 14px;
+    }
+
+    .alert {
+        font-size: 16px;
+    }
+</style>
+
+<h2>Xóa tài khoản khách hàng</h2>
+
+<div class="container">
+    <div class="alert alert-warning" role="alert">
+        Bạn có chắc chắn muốn xóa tài khoản này?
     </div>
-    <section class="section dashboard">
-        <div class="row">
-            <div class="col-lg-8" style="width:1200px">
-                <div>
-                    <h4>TaiKhoanKH</h4>
-                    <hr />
-                    <dl class="dl-horizontal">
-                        <dt>
-                            @Html.DisplayNameFor(model => model.KhachHangID)
-                        </dt>
 
-                        <dd>
-                            @Html.DisplayFor(model => model.KhachHangID)
-                        </dd>
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <dl class="dl-horizontal">
+                <dt>ID</dt>
+                <dd>@Model.TaiKhoanID</dd>
 
-                        <dt>
-                            @Html.DisplayNameFor(model => model.TenDangNhap)
-                        </dt>
+                <dt>Tên đăng nhập</dt>
+                <dd>@Model.TenDangNhap</dd>
 
-                        <dd>
-                            @Html.DisplayFor(model => model.TenDangNhap)
-                        </dd>
+                <dt>Trạng thái</dt>
+                <dd>@Model.TrangThai</dd>
 
-                        <dt>
-                            @Html.DisplayNameFor(model => model.MatKhau)
-                        </dt>
+                <dt>Khách hàng</dt>
+                <dd>@Model.KhachHang?.TenKhachHang</dd>
+            </dl>
+        </div>
+    </div>
 
-                        <dd>
-                            @Html.DisplayFor(model => model.MatKhau)
-                        </dd>
-
-                        <dt>
-                            @Html.DisplayNameFor(model => model.TrangThai)
-                        </dt>
-
-                        <dd>
-                            @Html.DisplayFor(model => model.TrangThai)
-                        </dd>
-
-                    </dl>
-
-                    @using (Html.BeginForm())
-                    {
-                        @Html.AntiForgeryToken()
-
-                        <div class="form-actions no-color">
-                            <input type="submit" value="Delete" class="btn btn-default" /> |
-                            @Html.ActionLink("Back to List", "Index")
-                        </div>
-                    }
-                </div>
-                </div>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Xóa" class="btn btn-danger" /> |
+                @Html.ActionLink("Hủy bỏ", "Index", null, new { @class = "btn btn-default" })
             </div>
-        </section>
-        </main>
-
+        </div>
+    }
+</div>

@@ -1,0 +1,72 @@
+﻿@model BaiTap.Models.KhuyenMai
+@{
+    ViewBag.Title = "XoaKhuyenMai";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>XoaKhuyenMai</h2>
+
+<style>
+    .centered-content {
+        max-width: 600px; /* Chiều rộng tối đa của nội dung */
+        margin: 100px auto 0; /* Căn giữa nội dung */
+        text-align: center; /* Căn giữa văn bản */
+    }
+
+    .dl-horizontal dt {
+        text-align: left; /* Căn trái cho tiêu đề */
+    }
+</style>
+
+<h2 class="text-center">Xóa Khuyến Mãi</h2>
+
+<div class="centered-content">
+    <h4>Khuyến Mãi</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.TenKhuyenMai)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TenKhuyenMai)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Mota)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Mota)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.NgayBD)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.NgayBD)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.NgayKT)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.NgayKT)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LoaiKM)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LoaiKM)
+        </dd>
+        <!-- Thêm các thuộc tính khác nếu cần -->
+    </dl>
+
+    <h4>Bạn có chắc chắn muốn xóa khuyến mãi này?</h4>
+
+    @using (Html.BeginForm("XoaKhuyenMai", "QuanLyKhuyenMai", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.KhuyenMaiID)
+
+        <div>
+            <input type="submit" value="Xóa" class="btn btn-danger" />
+            @Html.ActionLink("Hủy", "DSKhuyenMai", "QuanLyKhuyenMai", null, new { @class = "btn btn-default" })
+        </div>
+    }
+</div>

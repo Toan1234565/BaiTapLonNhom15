@@ -483,6 +483,9 @@
     <Content Include="Views\QuanLyTonKho\SuaTonKho.cshtml" />
     <Content Include="Views\BaoCao\Index.cshtml" />
     <Content Include="Views\QuanLyTonKho\TonKho.cshtml" />
+    <Content Include="Views\QuanLyKhuyenMai\SuaKM.cshtml" />
+    <Content Include="Views\QuanLyKhuyenMai\XoaKhuyenMai.cshtml" />
+    <Content Include="Views\QuanLyKhuyenMai\ChiTietKM.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="img\" />

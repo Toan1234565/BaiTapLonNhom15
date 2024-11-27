@@ -1,65 +1,94 @@
 ﻿@model IEnumerable<BaiTap.Models.TaiKhoanKH>
 
 @{
-    ViewBag.Title = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Danh Sách Tài Khoản Khách Hàng";
 }
 
-<main id="main" class="main" style="width:100%">
-    <div class="pagetitle">
-        <h1>Dashboard</h1>
-        <nav>
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                <li class="breadcrumb-item active">Dashboard</li>
-            </ol>
-        </nav>
-    </div>
-    <section class="section dashboard">
-        <div class="row">
-            <div class="col-lg-8" style="width:1200px">
-                <table class="table">
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.KhachHangID)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.TenDangNhap)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.MatKhau)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.TrangThai)
-                        </th>
-                        <th></th>
-                    </tr>
+<h2>@ViewBag.Title</h2>
 
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.KhachHangID)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.TenDangNhap)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.MatKhau)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.TrangThai)
-                            </td>
-                            <td>
-                                @Html.ActionLink("Xoa ", "Delete", new { id = item.TaiKhoanID }) |
-                                @Html.ActionLink("Đơn hàng", "ChiTiet", new { id = item.TaiKhoanID }) |
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-warning">@ViewBag.Message</div>
+}
 
-                            </td>
-                        </tr>
-                    }
+<div class="table-wrapper">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Tên Đăng Nhập</th>
+                <th>Khách Hàng</th>
+                <th>Trạng Thái</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var taiKhoanKH in Model)
+            {
+                <tr>
+                    <td>@taiKhoanKH.TenDangNhap</td>
+                    <td>@taiKhoanKH.KhachHang?.TenKhachHang ?? "Chưa có thông tin"</td>
+                    <td>@taiKhoanKH.TrangThai</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
-                </table>
-                </div>
-            </div>
-        </section>
-        </main>
+<style>
+    /* Căn giữa toàn bộ trang */
+    body, html {
+        height: 100%;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .alert-warning {
+        text-align: center;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    /* Căn giữa và tạo không gian cho bảng */
+    .table-wrapper {
+        width: 80%;
+        max-width: 1000px; /* Đảm bảo bảng không quá rộng */
+        margin: auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Tạo kiểu bảng đẹp */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #007bff;
+        color: white;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #ddd;
+    }
+</style>

@@ -9,7 +9,7 @@ namespace BaiTap.Controllers
 {
     public class QuanLyKhuyenMaiController : Controller
     {
-        private Model1 db = new Model1();
+        private readonly Model1 db = new Model1();
 
         // GET: QuanLyKhuyenMai
         public ActionResult Index()
@@ -37,21 +37,28 @@ namespace BaiTap.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SuaKM(KhuyenMai km)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(km);
+            }
+
             var update = db.KhuyenMai.Find(km.KhuyenMaiID);
             if (update == null)
             {
                 return HttpNotFound();
             }
+
             update.TenKhuyenMai = km.TenKhuyenMai;
             update.NgayBD = km.NgayBD;
-            var id = db.SaveChanges();
-            if (id > 0)
+
+            try
             {
+                db.SaveChanges();
                 return RedirectToAction("DSKhuyenMai");
             }
-            else
+            catch (Exception ex)
             {
-                ModelState.AddModelError("", "Thay đổi thông tin khuyến mãi thất bại");
+                ModelState.AddModelError("", "Thay đổi thông tin khuyến mãi thất bại: " + ex.Message);
                 return View(km);
             }
         }
@@ -68,36 +75,47 @@ namespace BaiTap.Controllers
 
         [HttpPost, ActionName("XoaKhuyenMai")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> XoaKhuyenMai1(int id)
+        public async Task<ActionResult> XoaKhuyenMaiConfirmed(int id)
         {
-            KhuyenMai km = db.KhuyenMai.Find(id);
+            KhuyenMai km = await db.KhuyenMai.FindAsync(id);
+            if (km == null)
+            {
+                return HttpNotFound();
+            }
+
             db.KhuyenMai.Remove(km);
             await db.SaveChangesAsync();
             return RedirectToAction("DSKhuyenMai");
         }
 
+        public ActionResult TaoKhuyenMai()
+        {
+            return View();
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult TaoKhuyenMai(KhuyenMai km)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                db.KhuyenMai.Add(km);
-                var id = db.SaveChanges();
-                if (id > 0)
-                {
-                    return RedirectToAction("DSKhuyenMai");
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Tạo khuyến mãi thất bại");
-                    return View(km);
-                }
+                return View(km);
             }
-            return View(km);
+
+            db.KhuyenMai.Add(km);
+            try
+            {
+                db.SaveChanges();
+                return RedirectToAction("DSKhuyenMai");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Tạo khuyến mãi thất bại: " + ex.Message);
+                return View(km);
+            }
         }
-        public ActionResult TaoKhuyenMai(int? IDSP, int? KMID, double? GiaTriDH, int? Diem, int? diemdoi)
+
+        public ActionResult ApDungKhuyenMai(int? IDSP, int? KMID, double? GiaTriDH, int? Diem, int? diemdoi)
         {
             if (IDSP.HasValue && KMID.HasValue && GiaTriDH.HasValue && Diem.HasValue && diemdoi.HasValue)
             {
@@ -138,7 +156,7 @@ namespace BaiTap.Controllers
                         khuyenmai.Soluong--;
                         if (khuyenmai.Soluong == 0)
                         {
-                            KMHetHan.KhuyenMais.Add(khuyenmai);
+                            // Handle out of stock promotion here, if needed
                         }
                         db.SaveChanges();
                         return Json(new { success = true, giaMoi = sanpham.Gia }, JsonRequestBehavior.AllowGet);
@@ -146,6 +164,11 @@ namespace BaiTap.Controllers
                 }
                 return Json(new { success = false }, JsonRequestBehavior.AllowGet);
             }
+            return View();
+        }
+
+        public ActionResult ChiTietKM()
+        {
             return View();
         }
     }
