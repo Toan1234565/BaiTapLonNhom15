@@ -30,5 +30,24 @@ namespace BaiTap.Controllers
             }
             return View(khachhang);
         }
+        public ActionResult SuaKhachHang(int id, TonKho ton)
+        {
+            var updata = db.TonKho.Find(id);
+            if (updata == null)
+            {
+                return HttpNotFound();
+            }
+            updata.SoLuongTon = ton.SoLuongTon;
+            var s = db.SaveChanges();
+            if (s > 0)
+            {
+                return View("SanPhamTonKho");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Thay đổi thông tin thất bại!");
+                return View(ton);
+            }
+        }
     }
 }
