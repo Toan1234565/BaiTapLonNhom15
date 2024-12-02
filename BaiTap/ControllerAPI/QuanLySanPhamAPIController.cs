@@ -7,25 +7,40 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using NLog;
+using System.Data.Entity;
+using System.Threading.Tasks;
 
 namespace BaiTap.Controllers
 {
     [RoutePrefix("api/quanlysanpham")]
     public class QuanLySanPhamAPIController : ApiController
     {
+        private readonly ProductService _productService = new ProductService();
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private Model1 db = new Model1();
 
         // GET: api/quanlysanpham/sanpham
         [HttpGet]
         [Route("sanpham")]
-        public IHttpActionResult SanPham()
+        public async Task<IHttpActionResult> SanPham()
         {
             try
             {
                 // Tắt proxy động
                 db.Configuration.ProxyCreationEnabled = false;
+                // lay danh sach san pham tu csdl
                 var sanpham = db.SanPham.ToList();
+                foreach (var sp in sanpham)
+                {
+                    string url = await _productService.GetProductImageAsync(sp.TenSanPham);
+                    if (!string.IsNullOrEmpty(url)) // cap nhat khi url khong rong
+                    {
+                        sp.HinhAnh = url;
+                        db.Entry(sp).State = EntityState.Modified;
+                    }
+                }
+                // luu hinh anh vao co so du lieu 
+                await db.SaveChangesAsync();
                 logger.Info("Lấy danh sách sản phẩm thành công.");
                 return Ok(sanpham);
             }

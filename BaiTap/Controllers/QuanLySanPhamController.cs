@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -10,7 +11,8 @@ namespace BaiTap.Controllers
 {
     public class QuanLySanPhamController : Controller
     {
-        private Model1 db = new Model1();
+        private readonly Model1 db = new Model1();
+        private readonly ProductService _productService = new ProductService();
         private static readonly HttpClient client = new HttpClient();
         public ActionResult Error()
         {
@@ -22,11 +24,13 @@ namespace BaiTap.Controllers
             HttpResponseMessage response = await client.GetAsync("https://localhost:44383/api/quanlysanpham/sanpham");
             if (response.IsSuccessStatusCode)
             {
+
                 var sanpham = await response.Content.ReadAsAsync<IEnumerable<SanPham>>();
                 return View(sanpham);
             }
             return View("Error");
         }
+
 
         // GET: QuanLySanPham/ChiTiet/{id}
         public async Task<ActionResult> XemChiTiet(int id)
@@ -133,6 +137,21 @@ namespace BaiTap.Controllers
                 ViewBag.ErrorMessage = $"Lỗi khi xóa sản phẩm: {errorMessage}";
                 return View("Error");
             }
+        }
+        public async Task<ActionResult> ANH()
+        {
+            var sp = db.SanPham.ToList();
+            foreach (var sanpham in sp)
+            {
+                string url = await _productService.GetProductImageAsync(sanpham.TenSanPham);
+                if (!string.IsNullOrEmpty(url)) // Cập nhật khi URL không rỗng
+                {
+                    sanpham.HinhAnh = url;
+                    db.Entry(sanpham).State = EntityState.Modified;
+                }
+            }
+            await db.SaveChangesAsync();
+            return RedirectToAction("SanPham");
         }
 
     }
