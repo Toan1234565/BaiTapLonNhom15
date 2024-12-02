@@ -16,7 +16,7 @@
         <h1>Dashboard</h1>
         <nav>
             <ol class="breadcrumb">
-               
+
                 <li class="breadcrumb-item"><a href="#">Home</a></li>
                 <li class="breadcrumb-item active">Dashboard</li>
             </ol>
@@ -99,10 +99,13 @@
                                         new SelectListItem { Text = "Giá Giảm Dần", Value = "Giagiam" }
                                     }, "Value", "Text"), new { @class = "form-control" })
                                 </div>
+                                <br />
                                 <button type="submit" class="btn btn-primary">Áp Dụng</button>
+                                <button type="button" class="btn btn-secondary" id="cancelButton" data-dismiss="modal">Đóng</button>
+
                             </div>
 
-                          }
+                        }
                     </div>
                 </form>
             </div>
@@ -124,8 +127,8 @@
                 <th style="padding-left:50px">
                     @Html.ActionLink("Gia tang dan", "GiaTang", "TimKiem")
                 </th>
-                <th style="padding-left:50px">               
-                    @Html.ActionLink("Gia Giam dan", "GiaGiam","TimKiem")
+                <th style="padding-left:50px">
+                    @Html.ActionLink("Gia Giam dan", "GiaGiam", "TimKiem")
 
                 </th>
             </tr>
@@ -220,8 +223,7 @@
 
                                                 <td>
                                                     <img src="@item.HinhAnh" alt="Hình ảnh sản phẩm" width="100" height="100" />
-                                                <td>
-
+                                                <td>                                          
                                                     @Html.ActionLink("Sửa", "Sua", new { id = item.SanPhamID }) |
 
                                                     @Html.ActionLink("Chi tiết", "XemChiTiet", new { id = item.SanPhamID }, null) |
@@ -242,7 +244,8 @@
         </div>
 
     </section>
-   @Html.ActionLink("Them san pham moi", "ThemSanPham", "QuanLySanPham", new { area = "" }, new { @class = "nav-link" })
+
+    @Html.ActionLink("Them san pham moi", "ThemSanPham", "QuanLySanPham", new { area = "" }, new { @class = "nav-link" })
 </main><!-- End #main -->
 <script>
     // lấy phần Modal
@@ -264,10 +267,17 @@
         modal.style.display = "none";
     }
 
+
     // Khi click ngoài Modal thì đóng Modal
     window.onclick = function (event) {
         if (event.target == modal) {
             modal.style.display = "none";
         }
     }
+    // khi nut dong thi modal se dong
+    document.getElementById("cancelButton").onclick = function () { modal.style.display = "none"; }
+
 </script>
+
+
+

@@ -20,51 +20,51 @@ namespace BaiTap.Controllers
             var kq = db.SanPham.Where(sp=> sp.TenSanPham.Contains(name) || sp.MoTa.Contains(name)).ToList();
             return View(kq);
         }
-      
-            public ActionResult LocSP(string name, int? IDHang, int? IDDanhMuc, double? to, double? from, string sx)
+
+        public ActionResult LocSP(string name, int? IDHang, int? IDDanhMuc, double? to = null, double? from = null, string sx = null)
+        {
+            IQueryable<SanPham> kq = db.SanPham;
+
+            // Lọc theo danh mục
+            if (IDDanhMuc.HasValue && IDDanhMuc.Value != 0)
             {
-                var kq = from sp in db.SanPham select sp;
-
-                // Lọc theo danh mục
-                if (IDDanhMuc.HasValue && IDDanhMuc != 0)
-                {
-                    kq = kq.Where(sp => sp.DanhMucID == IDDanhMuc.Value);
-                }
-
-                // Lọc theo hãng
-                if (IDHang.HasValue && IDHang != 0)
-                {
-                    kq = kq.Where(sp => sp.HangID == IDHang.Value);
-                }
-
-                // Lọc theo khoảng giá
-                if (from.HasValue && to.HasValue && from != 0 && to != 0)
-                {
-                    kq = kq.Where(x => x.Gia >= from && x.Gia <= to);
-                }
-
-                // Lọc theo tên sản phẩm
-                if (!string.IsNullOrEmpty(name))
-                {
-                    kq = kq.Where(x => x.TenSanPham.Contains(name));
-                }
-
-                // Sắp xếp
-                switch (sx)
-                {
-                    case "Giatang":
-                        kq = kq.OrderBy(x => x.Gia);
-                        break;
-                    case "Giagiam":
-                        kq = kq.OrderByDescending(x => x.Gia);
-                        break;
-                    default:
-                        kq = kq.OrderBy(x => x.Gia);
-                        break;
-                }
-
-                return View(kq.ToList());
+                kq = kq.Where(sp => sp.DanhMucID == IDDanhMuc.Value);
             }
+
+            // Lọc theo hãng
+            if (IDHang.HasValue && IDHang.Value != 0)
+            {
+                kq = kq.Where(sp => sp.HangID == IDHang.Value);
+            }
+
+            // Lọc theo khoảng giá
+            if (from.HasValue && to.HasValue && from.Value > 0 && to.Value > 0)
+            {
+                kq = kq.Where(sp => sp.Gia >= from.Value && sp.Gia <= to.Value);
+            }
+
+            // Lọc theo tên sản phẩm
+            if (!string.IsNullOrEmpty(name))
+            {
+                kq = kq.Where(sp => sp.TenSanPham.Contains(name));
+            }
+
+            // Sắp xếp
+            switch (sx)
+            {
+                case "Giatang":
+                    kq = kq.OrderBy(sp => sp.Gia);
+                    break;
+                case "Giagiam":
+                    kq = kq.OrderByDescending(sp => sp.Gia);
+                    break;
+                default:
+                    kq = kq.OrderBy(sp => sp.Gia);
+                    break;
+            }
+
+            return View(kq.ToList());
+        }
         public ActionResult GiaTang()
         {
             var kq = db.SanPham.OrderBy(x => x.Gia).ToList();

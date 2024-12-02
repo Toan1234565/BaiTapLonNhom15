@@ -235,41 +235,6 @@ namespace BaiTap.Controllers
                 return View(ton);
             }
         }
-
-
-        private static readonly HttpClient client = new HttpClient();
-        public async Task<ActionResult> CheckKho()
-        {
-            var s = await client.GetAsync("");
-            if (s.IsSuccessStatusCode)
-            {
-                var tonkho = await s.Content.ReadAsAsync<IEnumerable<TonKho>>();
-                return View(tonkho); // hien thij san pham ton kho thap
-            }
-            return View("Error");// hien thi trang loi neu co van de API
-        }
-        public async Task<ActionResult> TonKho()
-        {
-            // Replace with your actual API key and company ID
-            string apiKey = "your_api_key";
-            string companyId = "your_company_id";
-
-            var client = new HttpClient();
-            client.BaseAddress = new Uri("https://cloudapi.inflowinventory.com");
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Add("Authorization", apiKey);
-
-            var response = await client.GetAsync($"/api/warehouses/{companyId}/stocklevels");
-            if (response.IsSuccessStatusCode)
-            {
-                var tonKhoList = await response.Content.ReadAsAsync<List<TonKho>>();
-                return View(tonKhoList);
-            }
-            return View(new List<TonKho>());
-        }
-
-
     }
 }
 
