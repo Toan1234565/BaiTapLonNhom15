@@ -274,6 +274,7 @@ namespace BaiTap.Controllers
             catch (Exception ex)
             {
                 logger.Error(ex, "Lỗi khi cập nhật thông tin tồn kho.");
+
                 return InternalServerError(ex);
             }
         }

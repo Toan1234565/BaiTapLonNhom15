@@ -19,7 +19,7 @@ namespace BaiTap.Controllers
         // GET: api/quanlysanpham/sanpham
         [HttpGet]
         [Route("sanpham")]
-        public IHttpActionResult DanhSach()
+        public IHttpActionResult SanPham()
         {
             try
             {
@@ -61,10 +61,12 @@ namespace BaiTap.Controllers
         }
 
         // POST: api/quanlysanpham/sua
-        [HttpPost]
+        [HttpPut]
         [Route("sua")]
-        public IHttpActionResult SuaSanPham([FromBody] SanPham sanpham, [FromBody] TonKho tonkho)
+        public IHttpActionResult Sua(SuaSanPham sp)
         {
+            var sanpham = sp.SanPham;
+            var tonkho = sp.TonKho;
             if (string.IsNullOrEmpty(sanpham.TenSanPham))
             {
                 return BadRequest("Tên sản phẩm không được để trống");
@@ -99,42 +101,20 @@ namespace BaiTap.Controllers
             update.DanhMucID = sanpham.DanhMucID;
             update.HinhAnh = sanpham.HinhAnh;
 
-            db.SaveChanges();
-            logger.Info("Sửa sản phẩm thành công. ID: {0}", sanpham.SanPhamID);
-            return Ok(update);
-        }
-
-        // DELETE: api/quanlysanpham/xoa/{id}
-        [HttpDelete]
-        [Route("xoa/{id}")]
-        public IHttpActionResult XoaSanPham(int id)
-        {
-            try
+            var id = db.SaveChanges();
+            if(id > 0)
             {
-                var sanpham = db.SanPham.Find(id);
-                if (sanpham == null)
-                {
-                    logger.Warn("Không tìm thấy sản phẩm với ID: {0}", id);
-                    return NotFound();
-                }
-
-                var chiTietSanPham = db.ChiTietSanPham.Where(x => x.SanPhamID == id).ToList();
-                foreach (var chitiet in chiTietSanPham)
-                {
-                    db.ChiTietSanPham.Remove(chitiet);
-                }
-                db.SanPham.Remove(sanpham);
-                db.SaveChanges();
-
-                logger.Info("Xóa sản phẩm thành công. ID: {0}", id);
-                return Ok();
+                logger.Info("Sửa sản phẩm thành công. ID: {0}", sanpham.SanPhamID);
+                return Ok(update);
             }
-            catch (Exception ex)
+            else
             {
-                logger.Error(ex, "Lỗi khi xóa sản phẩm với ID: {0}", id);
-                return InternalServerError(ex);
+                logger.Info("that bai");
+                return BadRequest("sua thong tin that bai");
             }
+           
         }
+        
 
         // GET: api/quanlysanpham/dschitiet
         [HttpGet]
@@ -180,7 +160,7 @@ namespace BaiTap.Controllers
         // POST: api/quanlysanpham/them
         [HttpPost]
         [Route("them")]
-        public IHttpActionResult ThemSanPham([FromBody] PhieuNhapKhoViewModel model)
+        public IHttpActionResult ThemSanPham(PhieuNhapKhoViewModel model)
         {
             try
             {
@@ -206,5 +186,48 @@ namespace BaiTap.Controllers
                 return InternalServerError(ex);
             }
         }
+        // GET: QuanLySanPham/Xoa/{id}
+        public IHttpActionResult Xoa(int id)
+        {
+            var sp = db.SanPham.Find(id);
+            if (sp == null)
+            {
+                return NotFound();
+            }
+            return Ok(sp);
+        }
+
+        // DELETE: api/quanlysanpham/xoa/{id}
+        [HttpDelete]
+        [Route("xoa/{id}")]
+        public IHttpActionResult XoaSanPham(int id)
+        {
+            try
+            {
+                var sanpham = db.SanPham.Find(id);
+                if (sanpham == null)
+                {
+                    logger.Warn("Không tìm thấy sản phẩm với ID: {0}", id);
+                    return NotFound();
+                }
+
+                var chiTietSanPham = db.ChiTietSanPham.Where(x => x.SanPhamID == id).ToList();
+                foreach (var chitiet in chiTietSanPham)
+                {
+                    db.ChiTietSanPham.Remove(chitiet);
+                }
+                db.SanPham.Remove(sanpham);
+                db.SaveChanges();
+
+                logger.Info("Xóa sản phẩm thành công. ID: {0}", id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Lỗi khi xóa sản phẩm với ID: {0}", id);
+                return InternalServerError(ex);
+            }
+        }
+
     }
 }

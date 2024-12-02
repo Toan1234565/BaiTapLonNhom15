@@ -49,7 +49,7 @@
                                 <h5 class="card-title">Recent Sales <span>| Today</span></h5>
                                 <h2>Sửa thông tin sản phẩm </h2>
 
-                                @using (Html.BeginForm("Sua", "SanPham", FormMethod.Post))
+                                @using (Html.BeginForm(FormMethod.Post))
                                 {
                                     @Html.AntiForgeryToken()
 
@@ -136,32 +136,24 @@
 
                                         <div class="form-group">
                                             <div class="col-md-offset-2 col-md-10">
-                                                <button type="button" id="saveButton" class="btn btn-default">Lưu</button>
+                                               
+                                                <input type="submit" value="Sửa" class="btn btn-default" />
                                             </div>
                                         </div>
 
                                     </div>
                                 }
+                                <div>
+                                    @Html.ActionLink("Quay lại danh sách", "sanpham")
+
+                                </div>
 
                             </div>
-
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
     </section>
-    <script>
-        $(document).ready(function () {
-            $('#saveButton').on('click', function () {
-                if (confirm('Bạn có muốn lưu không?')) {
-                    // Nếu người dùng nhấn "Đồng ý", gửi form
-                    $(this).closest('form').submit();
-                } else {
-                    // Nếu người dùng nhấn "Hủy bỏ", không làm gì cả
-                }
-            });
-        });
-    </script>
+   
 </main>

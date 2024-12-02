@@ -1,94 +1,43 @@
-﻿using BaiTap.Models;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Mvc;
+using BaiTap.Models;
 
 namespace BaiTap.Controllers
 {
     public class TimKiemController : Controller
     {
+        private static readonly HttpClient client = new HttpClient();
         private Model1 db = new Model1();
-        // GET: TimKiem
         public ActionResult Index()
         {
+            ViewBag.HangList = new SelectList(db.Hang.ToList(), "HangID", "TenHang");
+            ViewBag.DanhMucList = new SelectList(db.DanhMuc.ToList(), "DanhMucID", "TenDanhMuc");
             return View();
         }
-        public ActionResult TimKiem(string name)
-        {
-            var kq = db.SanPham.Where(sp=> sp.TenSanPham.Contains(name) || sp.MoTa.Contains(name)).ToList();
-            return View(kq);
-        }
 
-        public ActionResult LocSP(string name, int? IDHang, int? IDDanhMuc, double? to = null, double? from = null, string sx = null)
+        public async Task<ActionResult> TimKiem(string name)
         {
-            IQueryable<SanPham> kq = db.SanPham;
-
-            // Lọc theo danh mục
-            if (IDDanhMuc.HasValue && IDDanhMuc.Value != 0)
+            HttpResponseMessage response = await client.GetAsync($"https://localhost:44383/api/timkiem/timkiem?name={name}");
+            if (response.IsSuccessStatusCode)
             {
-                kq = kq.Where(sp => sp.DanhMucID == IDDanhMuc.Value);
+                var kq = await response.Content.ReadAsAsync<List<SanPham>>();
+                return View(kq);
             }
-
-            // Lọc theo hãng
-            if (IDHang.HasValue && IDHang.Value != 0)
-            {
-                kq = kq.Where(sp => sp.HangID == IDHang.Value);
-            }
-
-            // Lọc theo khoảng giá
-            if (from.HasValue && to.HasValue && from.Value > 0 && to.Value > 0)
-            {
-                kq = kq.Where(sp => sp.Gia >= from.Value && sp.Gia <= to.Value);
-            }
-
-            // Lọc theo tên sản phẩm
-            if (!string.IsNullOrEmpty(name))
-            {
-                kq = kq.Where(sp => sp.TenSanPham.Contains(name));
-            }
-
-            // Sắp xếp
-            switch (sx)
-            {
-                case "Giatang":
-                    kq = kq.OrderBy(sp => sp.Gia);
-                    break;
-                case "Giagiam":
-                    kq = kq.OrderByDescending(sp => sp.Gia);
-                    break;
-                default:
-                    kq = kq.OrderBy(sp => sp.Gia);
-                    break;
-            }
-
-            return View(kq.ToList());
+            return RedirectToAction("Error","QuanLySanPham");
         }
-        public ActionResult GiaTang()
+        public async Task<ActionResult> LocSP(string name, int ? IDHang, int ? IDDanhMuc, double ? to, double ? from, string sx)
         {
-            var kq = db.SanPham.OrderBy(x => x.Gia).ToList();
-            return View(kq);
-        }
-        public ActionResult GiaGiam()
-        {
-            var kq = db.SanPham.OrderByDescending(x => x.Gia).ToList();
-            return View(kq);
-        }
-        public ActionResult Banchay1()
-        {
-           var sanpham = db.SanPham.ToList();
-            var kq = sanpham.Select(x => new
+            HttpResponseMessage response = await client.GetAsync($"http://localhost:4483/api/timkiem/locsp?name = {name}&IDHang = {IDHang} & IDDanhMuc= {IDDanhMuc} & from = {from} & to = {to} & sx = {sx}");
+            if (response.IsSuccessStatusCode)
             {
-                SanPham = x,
-                SoLuongDaban = x.Soluong.GetValueOrDefault() - x.TonKho.Sum(tk => tk.SoLuongTon)
-            }). OrderByDescending(x => x.SoLuongDaban).Take(10).Select(x => x.SanPham).ToList();
-            return View(kq);    
+                var kq = await response.Content.ReadAsAsync<List<SanPham>>();
+                return View(kq);
+            }
+            return RedirectToAction("Error", "QuanLySanPham");
         }
-       public ActionResult Banchay2()
-        {
-            var kq = db.SanPham.OrderBy(x=>x.SoLuongDaBan).Take(5).ToList ();
-            return View(kq);
-        }
+        // Tạo hàm GET cho các hành động khác tương tự như `TimKiem`
     }
- }
+}

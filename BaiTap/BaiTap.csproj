@@ -202,7 +202,8 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="ControllerAPI\QuanLySanPhamController.cs" />
+    <Compile Include="ControllerAPI\QuanLySanPhamAPIController.cs" />
+    <Compile Include="ControllerAPI\TimKiemAPIController.cs" />
     <Compile Include="Controllers\BaoCaoDoanhThuController.cs" />
     <Compile Include="Controllers\CanhBaoController.cs" />
     <Compile Include="Controllers\DanhMucController.cs" />
@@ -247,6 +248,7 @@
     <Compile Include="Models\SanPhamKhuyenMai.cs" />
     <Compile Include="Models\Sosanh.cs" />
     <Compile Include="Models\SS.cs" />
+    <Compile Include="Models\SuaSanPham.cs" />
     <Compile Include="Models\TaiKhoanKH.cs" />
     <Compile Include="Models\TonKho.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -505,6 +507,7 @@
     <Content Include="Views\QuanLyKhuyenMai\XoaKhuyenMai.cshtml" />
     <Content Include="Views\QuanLyKhuyenMai\ChiTietKM.cshtml" />
     <Content Include="Views\QuanLyKhachHang\SuaKH.cshtml" />
+    <Content Include="Views\QuanLySanPham\Error.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
