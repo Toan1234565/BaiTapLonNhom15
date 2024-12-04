@@ -1,247 +1,139 @@
-﻿using BaiTap.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Web;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using BaiTap.Models;
+using static Google.Rpc.Context.AttributeContext.Types;
 
 namespace BaiTap.Controllers
 {
     public class QuanLyTonKhoController : Controller
     {
-        private Model1 db = new Model1();
+        private static readonly HttpClient client = new HttpClient();
+        private static readonly string apiUrl = "https://localhost:44383/api/quanlytonkho";
 
         // GET: QuanLyTonKho
         public ActionResult Index()
         {
             return View();
         }
-
-        // Hiển thị danh sách sản phẩm tồn kho
-        public ActionResult SanPhamTonKho()
+        public async Task<ActionResult> SanPhamTonKho()
         {
-            List<TonKho> ds = db.TonKho.ToList();
-            return View(ds);
-        }
-
-        // Nhập sản phẩm mới
-        public ActionResult Nhap()
-        {
-            return View(new PhieuNhapKhoViewModel());
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Nhap(PhieuNhapKhoViewModel model)
-        {
-            if (model.SanPhamID.HasValue)
+            try
             {
-                var sanpham = db.SanPham.Find(model.SanPhamID.Value);
-                if (sanpham != null)
+                HttpResponseMessage kq = await client.GetAsync($"{apiUrl}/sanphamtonkho");
+                if (kq.IsSuccessStatusCode)
                 {
-                    return RedirectToAction("NhapSanPhamCoSan", new { id = model.SanPhamID.Value });
-                }
-            }
-            return RedirectToAction("NhapKho");
-        }
-
-        // Nhập sản phẩm có sẵn
-        public ActionResult NhapSanPhamCoSan(int id)
-        {
-            var sanPham = db.SanPham.Find(id);
-            if (sanPham != null)
-            {
-                var viewModel = new PhieuNhapKhoViewModel
-                {
-                    SanPhamID = sanPham.SanPhamID,
-                    soluong = 0,
-                    Gia = sanPham.Gia ?? 0
-                };
-                return View(viewModel);
-            }
-            return HttpNotFound();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult NhapSanPhamCoSan(PhieuNhapKhoViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var sp = db.SanPham.Find(model.SanPhamID);
-                if (sp != null)
-                {
-                    var tonKho = db.TonKho.FirstOrDefault(p => p.SanPhamID == model.SanPhamID);
-                    if (tonKho == null)
+                    var sanpham = await kq.Content.ReadAsAsync<IEnumerable<TonKho>>();
+                    if (sanpham != null)
                     {
-                        tonKho = new TonKho
-                        {
-                            SanPhamID = model.SanPhamID.Value,
-                            SoLuongTon = 0,
-                            NgayCapNhat = DateTime.Now
-                        };
-                        db.TonKho.Add(tonKho);
+                        return View(sanpham);
                     }
+                    ViewBag.Thongbao = "tai danh sach san pham that bai";
+                    return View("Error");
+                }
+                ViewBag.Thongbao = "Có lỗi xảy ra";
+                return View("Error");
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Thongbao = $"Có lỗi khi lấy API: {ex.Message}";
+                return View("Error");
+            }
 
-                    sp.Soluong += model.soluong;
-
-                    sp.Gia = model.Gia;
-                    tonKho.SoLuongTon += model.soluong;
-                    tonKho.NgayCapNhat = DateTime.Now;
-                    //sp.SoLuongDaBan = sp.Soluong - tonKho.SoLuongTon;
-                    //sp.TongDoanhThu = sp.SoLuongDaBan * sp.Gia;
-
-                    db.SaveChanges();
+        }
+        public ActionResult nhap()
+        {
+            return PartialView("nhap",new PhieuNhapKhoViewModel());
+        }
+        [HttpPost]
+        public async Task<ActionResult> Nhap(PhieuNhapKhoViewModel model)
+        {
+            try
+            {
+                HttpResponseMessage kq = await client.PostAsJsonAsync($"{apiUrl}/nhap", model);
+                if (kq.IsSuccessStatusCode)
+                {
                     return RedirectToAction("SanPhamTonKho");
                 }
+                ViewBag.Thongbao = "Có lỗi xảy ra";
+                return View("Error");
             }
-            return View(model);
-        }
-
-        // Nhập sản phẩm mới vào kho
-        public ActionResult NhapKho()
-        {
-            var viewmodel = new PhieuNhapKhoViewModel
+            catch (Exception ex)
             {
-                SanPham = new SanPham(),
-                ChiTietSanPham = new ChiTietSanPham(),
-                TonKho = new TonKho()
-            };
-            return View(viewmodel);
+                ViewBag.Thongbao = $"Có lỗi khi lấy API: {ex.Message}";
+                return View("Error");
+            }
+        }
+        public async Task<ActionResult> SuaTonKho(int id)
+        {
+            HttpResponseMessage response = await client.GetAsync($"{apiUrl}/suatonkho/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                var tonKho = await response.Content.ReadAsAsync<TonKho>();
+                if (tonKho != null)
+                {
+                    return PartialView("Sua", tonKho);
+                }
+                ViewBag.ErrorMessage = "that bai.";
+                return View("Error");
+            }
+            ViewBag.ErrorMessage = "ko ket noi dc voi API.";
+            return View("Error");
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult NhapKho(PhieuNhapKhoViewModel model, HttpPostedFileBase HinhAnh)
+        public async Task<ActionResult> SuaTonKho(TonKho model)
         {
-            if (ModelState.IsValid)
+            HttpResponseMessage response = await client.PostAsJsonAsync($"{apiUrl}/suatonkho/{model.SanPhamID}", model);
+            if (response.IsSuccessStatusCode)
             {
+                return RedirectToAction("Index");
+            }
+            ViewBag.ErrorMessage = "Unable to update data.";
+            return View("Error");
+        }
 
-                string path = "";
-                if (HinhAnh != null)
+        public async Task<ActionResult> XemThongTin(int id)
+        {
+            HttpResponseMessage response = await client.GetAsync($"{apiUrl}/thongtinsp/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                var sanPham = await response.Content.ReadAsAsync<SanPham>(); // Adjust according to the data structure
+                if (sanPham != null)
                 {
-                    string filename = Path.GetFileName(HinhAnh.FileName);
-                    path = Path.Combine(Server.MapPath("~/img"), filename);
-                    HinhAnh.SaveAs(path);
-                    model.SanPham.HinhAnh = "~/img/" + filename;
+                    return PartialView("_XemThongTin", sanPham);
                 }
-
-                var sanpham = model.SanPham;
-                var chiTiet = model.ChiTietSanPham;
-                var tonKho = model.TonKho;
-
-                // Cập nhật số lượng đã bán và tổng doanh thu
-                sanpham.Soluong = tonKho.SoLuongTon;
-                //sanpham.SoLuongDaBan = sanpham.Soluong - tonKho.SoLuongTon;
-                //sanpham.TongDoanhThu = sanpham.Gia * sanpham.SoLuongDaBan;
-                // Lưu thông tin sản phẩm
-                db.SanPham.Add(sanpham);
-                db.SaveChanges();
-
-                // Lưu thông tin chi tiết sản phẩm
-                chiTiet.SanPhamID = sanpham.SanPhamID;
-                db.ChiTietSanPham.Add(chiTiet);
-                db.SaveChanges();
-
-                // Lưu thông tin tồn kho
-                tonKho.SanPhamID = sanpham.SanPhamID;
-                tonKho.NgayCapNhat = DateTime.Now;
-                db.TonKho.Add(tonKho);
-                db.SaveChanges();
-                if (sanpham.SanPhamID > 0)
-                {
-
-                    return RedirectToAction("SanPhamTonKho");
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Them that bai");
-                    return View(model);
-                }
+                ViewBag.ErrorMessage = "that bai.";
+                return View("Error");
             }
-
-            return View(model);
+            ViewBag.ErrorMessage = "ko ket noi dc API.";
+            return View("Error");
         }
-
-        public ActionResult ThongTinSP(int id)
+        public async Task<ActionResult> SapxepTang()
         {
-            var Sanpham = db.SanPham.Where(c => c.SanPhamID == id).ToList();
-            if (Sanpham == null)
+            HttpResponseMessage response = await client.GetAsync($"https://localhost:44383/api/quanly");
+            if (response.IsSuccessStatusCode)
             {
-                return HttpNotFound();
+                var kq = await response.Content.ReadAsAsync<List<TonKho>>();
+                return View(kq);
             }
+            return View("Error");
+        }
+        public async Task<ActionResult> SapxepGiam()
+        {
+            HttpResponseMessage response = await client.GetAsync($"https://localhost:44383/api/quanlytonkho/sapxepgiam");
+            if (response.IsSuccessStatusCode)
+            {
+                var kq = await response.Content.ReadAsAsync<List<TonKho>>();
+                return View(kq);
+            }
+            return View("Error");
+        }
 
-            return View();
-        }
-        // Xuất kho (Chức năng có thể được mở rộng)
-        public ActionResult XuatKho()
-        {
-            return View();
-        }
 
-        // Sắp xếp sản phẩm tồn kho
-        public ActionResult SapxepTang()
-        {
-            var kq = db.TonKho.OrderBy(x => x.SoLuongTon).ToList();
-            return View(kq);
-        }
-        public ActionResult SapxepGiam()
-        {
-            var kq = db.TonKho.OrderByDescending(x => x.SoLuongTon).ToList();
-            return View(kq);
-        }
-        public ActionResult LocNgay(DateTime? Time, DateTime? enddate)
-        {
-            var tonkho = db.TonKho.AsQueryable();
-            if (Time.HasValue)
-            {
-                tonkho = tonkho.Where(x => x.NgayCapNhat >= Time.Value);
-            }
-            if (enddate.HasValue)
-            {
-                tonkho = tonkho.Where(x => x.NgayCapNhat <= enddate.Value);
-            }
-            return View(tonkho.ToList());
-        }
-        public ActionResult SuaTonKho(int id)
-        {
-            var tonkho = db.TonKho.Find(id);
-            if(tonkho == null)
-            {
-                return HttpNotFound();
-            }
-            return View(tonkho);
-        }
-        [HttpPost]
-        public ActionResult SuaTonKho(int id, TonKho ton)
-        {
-            var updata = db.TonKho.Find(id);
-            if(updata == null)
-            {
-                return HttpNotFound();  
-            }
-            updata.SoLuongTon = ton.SoLuongTon;
-            var s = db.SaveChanges();
-            if(s > 0)
-            {
-                return View("SanPhamTonKho");
-            }
-            else
-            {
-                ModelState.AddModelError("", "Thay đổi thông tin thất bại!");
-                return View(ton);
-            }
-        }
     }
+
 }
-
-
-
-
-
-
-
 

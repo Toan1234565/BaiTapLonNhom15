@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using BaiTap.Models;
 
 public class ProductService
 {
@@ -9,8 +10,8 @@ public class ProductService
 
     public async Task<string> GetProductImageAsync(string productName)
     {
-        string apiKey = "AIzaSyChjfhK8a-wHmUpqHJCaPjiBngzl0-XVt4"; // Thay thế bằng API Key của bạn
-        string searchEngineId = "65d901ff3b2d243c8"; // Thay thế bằng Search Engine ID của bạn
+        string apiKey = "AIzaSyDs17oVwAv3Gvu3IZ_GoBKzxdjpYjZp95k"; // Thay thế bằng API Key của bạn
+        string searchEngineId = "54a2eefbf7c49446b"; // Thay thế bằng Search Engine ID của bạn54a2eefbf7c49446b
         string searchUrl = $"https://www.googleapis.com/customsearch/v1?q={productName}&cx={searchEngineId}&searchType=image&key={apiKey}";
 
         Console.WriteLine(searchUrl); // In URL ra để kiểm tra
@@ -25,13 +26,22 @@ public class ProductService
             if (searchResults["items"] != null && searchResults["items"].HasValues)
             {
                 string imageUrl = searchResults["items"][0]["link"].ToString();
+                string sanpham = await GetProductImageAsync(productName);
+
                 return imageUrl;
+                
             }
+           
         }
         else
         {
             Console.WriteLine("Error: " + response.StatusCode + " - " + response.ReasonPhrase);
         }
         return null;
+
+    }
+    private async Task<string> GetProductDescriptionAsync(string TenSanPham)
+    {
+        return await Task.FromResult($"Mo ta cua san pham ");
     }
 }

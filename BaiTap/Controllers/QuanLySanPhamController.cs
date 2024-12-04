@@ -26,7 +26,12 @@ namespace BaiTap.Controllers
             {
 
                 var sanpham = await response.Content.ReadAsAsync<IEnumerable<SanPham>>();
-                return View(sanpham);
+                if (sanpham != null)
+                {
+                    return View(sanpham);
+                }
+                ViewBag.Thongbao = "tai danh sach san pham that bai";
+                return View("Error");
             }
             return View("Error");
         }
@@ -39,7 +44,7 @@ namespace BaiTap.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var sanpham = await response.Content.ReadAsAsync<List<ChiTietSanPham>>();
-                if(sanpham != null & sanpham.Count > 0)
+                if (sanpham != null & sanpham.Count > 0)
                 {
                     return View(sanpham);
                 }
@@ -53,8 +58,13 @@ namespace BaiTap.Controllers
         // GET: QuanLySanPham/Them
         public ActionResult ThemSanPham()
         {
-            
-            return View();
+
+            var viewModel = new PhieuNhapKhoViewModel
+            {
+                SanPham = new SanPham(),
+                ChiTietSanPham = new ChiTietSanPham()
+            };
+            return View(viewModel);
         }
 
         // POST: QuanLySanPham/Them
@@ -65,9 +75,10 @@ namespace BaiTap.Controllers
             if (ModelState.IsValid)
             {
                 HttpResponseMessage response = await client.PostAsJsonAsync("https://localhost:44383/api/quanlysanpham/them", model);
-               
+
                 if (response.IsSuccessStatusCode)
                 {
+
                     return RedirectToAction("SanPham");
                 }
                 else
@@ -80,8 +91,7 @@ namespace BaiTap.Controllers
             {
                 ModelState.AddModelError("", "Dữ liệu nhập vào không hợp lệ.");
             }
-            ViewBag.DanhMucs = new SelectList(db.DanhMuc.ToList(), "DanhMucID", "TenDanhMuc"); 
-            ViewBag.Hangs = new SelectList(db.Hang.ToList(), "HangID", "TenHang");
+
             return View(model);
         }
 
@@ -93,13 +103,13 @@ namespace BaiTap.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var sanpham = await response.Content.ReadAsAsync<SanPham>();
-                
-                if(sanpham != null)
+
+                if (sanpham != null)
                 {
                     return View(sanpham);
                 }
-                ViewBag.Thongbao = "Không tìm thấy sản phẩm với ID đuọc cung câp";
-                return View("Eror");
+                ViewBag.Thongbao = "Không tìm thấy sản phẩm với ID được cung cấp";
+                return View("Error");
             }
             ViewBag.Thongbao = "Lỗi khi gọi API";
             return View("Error");
@@ -132,27 +142,92 @@ namespace BaiTap.Controllers
             }
             else
             {
+
                 // Lấy thông báo lỗi từ phản hồi API
                 var errorMessage = await response.Content.ReadAsStringAsync();
                 ViewBag.ErrorMessage = $"Lỗi khi xóa sản phẩm: {errorMessage}";
                 return View("Error");
             }
         }
-        public async Task<ActionResult> ANH()
+
+
+
+        public ActionResult Index()
         {
-            var sp = db.SanPham.ToList();
-            foreach (var sanpham in sp)
-            {
-                string url = await _productService.GetProductImageAsync(sanpham.TenSanPham);
-                if (!string.IsNullOrEmpty(url)) // Cập nhật khi URL không rỗng
-                {
-                    sanpham.HinhAnh = url;
-                    db.Entry(sanpham).State = EntityState.Modified;
-                }
-            }
-            await db.SaveChangesAsync();
-            return RedirectToAction("SanPham");
+            ViewBag.HangList = new SelectList(db.Hang.ToList(), "HangID", "TenHang");
+            ViewBag.DanhMucList = new SelectList(db.DanhMuc.ToList(), "DanhMucID", "TenDanhMuc");
+            return View();
         }
+
+        public async Task<ActionResult> TimKiem(string name)
+        {
+            HttpResponseMessage response = await client.GetAsync($"https://localhost:44383/api/timkiem/timkiemsanpham?name={name}");
+            if (response.IsSuccessStatusCode)
+            {
+                var sanpham = await response.Content.ReadAsAsync<IEnumerable<SanPham>>();
+
+                return View(sanpham);
+            }
+            ViewBag.Thongbao = "loi khi goi API";
+            return View("Error");
+        }
+        public async Task<ActionResult> LocSP(string name, int? IDHang, int? IDDanhMuc, double? to, double? from, string sx)
+        {
+            string url = $"http://localhost:4483/api/timkiem/locsp?name={name}&IDHang={IDHang}&IDDanhMuc={IDDanhMuc}&from={from}&to={to}&sx={sx}";
+            HttpResponseMessage response = await client.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var kq = await response.Content.ReadAsAsync<List<SanPham>>();
+                return View(kq);
+            }
+            ViewBag.Thongbao = "Lỗi khi gọi API";
+            return View("Error");
+        }
+
+        // Tạo hàm GET cho các hành động khác tương tự như `TimKiem`
+        public async Task<ActionResult> GiaTang()
+        {
+            HttpResponseMessage response = await client.GetAsync($"https://localhost:44383/api/timkiem/giatang");
+            if (response.IsSuccessStatusCode)
+            {
+                var kq = await response.Content.ReadAsAsync<List<SanPham>>();
+                return View(kq);
+            }
+            return View("Error");
+        }
+        public async Task<ActionResult> GiaGIam()
+        {
+            HttpResponseMessage response = await client.GetAsync($"https://localhost:44383/api/timkiem/giagiam");
+            if (response.IsSuccessStatusCode)
+            {
+                var kq = await response.Content.ReadAsAsync<List<SanPham>>();
+                return View(kq);
+            }
+            return View("Error");
+        }
+
+
+        public async Task<ActionResult> Sosanh(int? id1, int? id2)
+        {
+            HttpResponseMessage response = await client.GetAsync($"https://localhost:44383/api/timkiem/SOSANH?id1={id1}&id2={id2}");
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsAsync<dynamic>();
+                return View(result.comparisonResult);
+            }
+            return View("Error");
+        }
+
+
+
+
+
+
+
+
+
+
+
 
     }
 }

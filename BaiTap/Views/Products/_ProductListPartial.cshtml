@@ -1,0 +1,11 @@
+﻿@model IEnumerable<BaiTap.Models.SanPham>
+
+<ul>
+    @foreach (var product in Model)
+    {
+        <li>
+            <input type="checkbox" value="@product.SanPhamID" /> @product.TenSanPham
+            <img src="@product.HinhAnh" alt="Product Image" width="100" height="100" style="padding-left:10px" />         
+        </li>
+    }
+</ul>
