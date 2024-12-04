@@ -89,7 +89,7 @@ namespace BaiTap.Controllers
             HttpResponseMessage response = await client.PostAsJsonAsync($"{apiUrl}/suatonkho/{model.SanPhamID}", model);
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("SanPhamTonKho");
             }
             ViewBag.ErrorMessage = "Unable to update data.";
             return View("Error");

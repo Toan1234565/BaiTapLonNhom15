@@ -590,7 +590,6 @@
     <Content Include="Views\QuanLySanPham\SanPham.cshtml" />
     <Content Include="Views\HangSX\DSHangsx.cshtml" />
     <Content Include="Views\DanhMuc\DsDanhMuc.cshtml" />
-    <Content Include="Views\QuanLySanPham\Sua.cshtml" />
     <Content Include="Views\QuanLySanPham\DSChiTiet.cshtml" />
     <Content Include="Views\QuanLyTonKho\SanPhamTonKho.cshtml" />
     <Content Include="Views\QuanLyTonKho\NhapKho.cshtml" />
@@ -639,6 +638,8 @@
     <Content Include="Views\QuanLySanPham\GiaGiam.cshtml" />
     <Content Include="Views\QuanLySanPham\Ds.cshtml" />
     <Content Include="Views\QuanLySanPham\Banchay1.cshtml" />
+    <Content Include="Views\QuanLySanPham\FromLoc.cshtml" />
+    <Content Include="Views\QuanLySanPham\FromSua.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />

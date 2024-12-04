@@ -46,7 +46,7 @@ namespace BaiTap.Controllers
                 var sanpham = await response.Content.ReadAsAsync<List<ChiTietSanPham>>();
                 if (sanpham != null & sanpham.Count > 0)
                 {
-                    return View(sanpham);
+                    return PartialView("XemChiTiet", sanpham);
                 }
                 ViewBag.Thongbao = "khong tim thay";
                 return View("Error");
@@ -64,7 +64,8 @@ namespace BaiTap.Controllers
                 SanPham = new SanPham(),
                 ChiTietSanPham = new ChiTietSanPham()
             };
-            return View(viewModel);
+            return PartialView("ThemSanPham", viewModel);
+           
         }
 
         // POST: QuanLySanPham/Them
@@ -97,6 +98,7 @@ namespace BaiTap.Controllers
 
         // GET: QuanLySanPham/Sua/{id}
         // truy cap den San pham khi duoc kich vao 
+       
         public async Task<ActionResult> Sua(int id)
         {
             HttpResponseMessage response = await client.GetAsync($"https://localhost:44383/api/quanlysanpham/sanpham/{id}");
@@ -106,7 +108,7 @@ namespace BaiTap.Controllers
 
                 if (sanpham != null)
                 {
-                    return View(sanpham);
+                    return PartialView("FromSua",sanpham);
                 }
                 ViewBag.Thongbao = "Không tìm thấy sản phẩm với ID được cung cấp";
                 return View("Error");
@@ -128,8 +130,10 @@ namespace BaiTap.Controllers
                 {
                     return RedirectToAction("SanPham");
                 }
+                ViewBag.Thongbao = "loi";
+                return View("Error");
             }
-            return View(sanpham);
+            return View("Error");
         }
 
         // GET: QuanLySanPham/Xoa/{id}
@@ -171,18 +175,26 @@ namespace BaiTap.Controllers
             ViewBag.Thongbao = "loi khi goi API";
             return View("Error");
         }
+        public ActionResult FromLoc()
+        {
+            return PartialView("FromLoc");
+        }
         public async Task<ActionResult> LocSP(string name, int? IDHang, int? IDDanhMuc, double? to, double? from, string sx)
         {
-            string url = $"http://localhost:4483/api/timkiem/locsp?name={name}&IDHang={IDHang}&IDDanhMuc={IDDanhMuc}&from={from}&to={to}&sx={sx}";
-            HttpResponseMessage response = await client.GetAsync(url);
-            if (response.IsSuccessStatusCode)
-            {
-                var kq = await response.Content.ReadAsAsync<List<SanPham>>();
-                return View(kq);
-            }
-            ViewBag.Thongbao = "Lỗi khi gọi API";
-            return View("Error");
+                 string url = $"http://localhost:44383/api/timkiem/locsp?name={name}&IDHang={IDHang}&IDDanhMuc={IDDanhMuc}&from={from}&to={to}&sx={sx}";
+                HttpResponseMessage response = await client.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    var kq = await response.Content.ReadAsAsync<List<SanPham>>();
+                    return View(kq);
+                }
+                ViewBag.Thongbao = "Lỗi khi gọi API";
+                return View("Error");
+            
+            
+           
         }
+
 
         // Tạo hàm GET cho các hành động khác tương tự như `TimKiem`
         public async Task<ActionResult> GiaTang()
