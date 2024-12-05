@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -54,7 +55,7 @@ namespace BaiTap.Controllers
             ViewBag.Thongbao = "loi khi gọi API.";
             return View("Error");
         }
-
+       
         // GET: QuanLySanPham/Them
         public ActionResult ThemSanPham()
         {
@@ -64,8 +65,8 @@ namespace BaiTap.Controllers
                 SanPham = new SanPham(),
                 ChiTietSanPham = new ChiTietSanPham()
             };
-            return PartialView("ThemSanPham", viewModel);
-           
+            return PartialView("_ThemSanPham", viewModel);
+
         }
 
         // POST: QuanLySanPham/Them
@@ -179,22 +180,29 @@ namespace BaiTap.Controllers
         {
             return PartialView("FromLoc");
         }
-        public async Task<ActionResult> LocSP(string name, int? IDHang, int? IDDanhMuc, double? to, double? from, string sx)
+        public async Task<ActionResult> LocSP(string name = null, int? IDHang = null, int? IDDanhMuc = null, double? to = null, double? from = null, string sx = null)
         {
-                 string url = $"http://localhost:44383/api/timkiem/locsp?name={name}&IDHang={IDHang}&IDDanhMuc={IDDanhMuc}&from={from}&to={to}&sx={sx}";
+            string url = $"https://localhost:44383/api/timkiem/locsanpham?name={name}&IDHang={IDHang}&IDDanhMuc={IDDanhMuc}&from={from}&to={to}&sx={sx}";
+            try
+            {
                 HttpResponseMessage response = await client.GetAsync(url);
                 if (response.IsSuccessStatusCode)
                 {
                     var kq = await response.Content.ReadAsAsync<List<SanPham>>();
                     return View(kq);
                 }
-                ViewBag.Thongbao = "Lỗi khi gọi API";
+                else
+                {
+                    ViewBag.Thongbao = $"Lỗi khi gọi API: {response.StatusCode} - {response.ReasonPhrase}";
+                    return View("Error");
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Thongbao = $"Ngoại lệ khi gọi API: {ex.Message}";
                 return View("Error");
-            
-            
-           
+            }
         }
-
 
         // Tạo hàm GET cho các hành động khác tương tự như `TimKiem`
         public async Task<ActionResult> GiaTang()
@@ -217,7 +225,10 @@ namespace BaiTap.Controllers
             }
             return View("Error");
         }
-
+        public ActionResult FromSoSanh()
+        {
+            return PartialView("FromSoSanh");
+        }
 
         public async Task<ActionResult> Sosanh(int? id1, int? id2)
         {

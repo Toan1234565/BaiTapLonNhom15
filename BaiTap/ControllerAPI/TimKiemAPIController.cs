@@ -43,9 +43,10 @@ namespace BaiTap.Controllers
         }
 
         [HttpGet]
-        [Route("locsp")]
-        public IHttpActionResult LocSP(string name, int? IDHang, int? IDDanhMuc, double? to = null, double? from = null, string sx = null)
+        [Route("locsanpham")]
+        public IHttpActionResult LocSP(string name = null, int? IDHang = null, int? IDDanhMuc = null, double? to = null, double? from = null, string sx = null)
         {
+          
             try
             {
                 db.Configuration.ProxyCreationEnabled = false;

@@ -599,7 +599,7 @@
     <Content Include="Views\DanhMuc\HangSX.cshtml" />
     <Content Include="Views\DanhMuc\TaoDM.cshtml" />
     <Content Include="Views\HangSX\SP.cshtml" />
-    <Content Include="Views\QuanLySanPham\ThemSanPham.cshtml" />
+    <Content Include="Views\QuanLySanPham\_ThemSanPham.cshtml" />
     <Content Include="Views\QuanLySanPham\Xoa.cshtml" />
     <Content Include="Views\Inventory\RunEcountDemo.cshtml" />
     <Content Include="Views\QuanLyTonKho\SapxepTang.cshtml" />
@@ -640,6 +640,7 @@
     <Content Include="Views\QuanLySanPham\Banchay1.cshtml" />
     <Content Include="Views\QuanLySanPham\FromLoc.cshtml" />
     <Content Include="Views\QuanLySanPham\FromSua.cshtml" />
+    <Content Include="Views\QuanLySanPham\FromSoSanh.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />

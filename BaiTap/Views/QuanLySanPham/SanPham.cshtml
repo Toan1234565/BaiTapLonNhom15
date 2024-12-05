@@ -67,6 +67,7 @@
     </div>
     <br />
     <div>
+        @*loc san pham*@
         <div class="form-actions no-color">
             <button type="button" class="btn btn-primary LocSP" data-toggle="modal" data-target="#LocSanPhamModal">
                 Lọc sản phẩm
@@ -89,6 +90,30 @@
             </div>
         </div>
 
+    </div>
+    @*so sanh sanh pham*@
+    <br />
+    <div>
+        <div class="form-actions no-color">
+            <button type="button" class="btn btn-primary SoSanh" data-toggle="modal" data-target="#SosanhModall">
+                So Sanh 
+            </button>
+            <div class="modal fade" id="SoSanhModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="SuaSanPhamTitle">So sánh thông tin sản phẩm</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Nội dung được tải động qua AJAX -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <br />
     <div>
@@ -328,13 +353,13 @@
                 }
                 });
                 });
+                    $('#ThemMoi').on('click', '#Luu', function () {
+                        $('#ThemSanPhamFrom').submit();
+                    });
 
-                // Xử lý form submission
-                $('#ThemMoi').on('click', '#Luu', function() {
-                $('#themSanPhamForm').submit();
                 });
                 // Handle form submission for editing
-                });
+
 
                 $(document).ready(function() {
                 // Mở modal và tải nội dung thông qua AJAX
@@ -350,8 +375,31 @@
                 });
 
                 // Xử lý form submission
-                $('#LocSanPhamModal').on('click', '#Loc', function() {
-                $('#LocSanPhamModal').submit();
+                    $('#fileterForm').submit(function (event) {
+                        event.preventDefault();
+                        $.ajax({
+                            url: '@Url.Action("LocSP","QuanLySanPham")',
+                            method: 'GET',
+                            data: $(this).serialize(),
+                            success: function (data) {
+                                $('#results').html(data);
+                                $("LocSanPhamModal").modal('hide')
+                            },
+                            Error: function (err) {
+                                console.error(err);
+                                alert("Loi khi goi API");
+                            }
+                        });
+                    });
+                });
+                $('.SoSanh').click(function() {
+                $.ajax({
+                url: '@Url.Action("FromSoSanh", "QuanLySanPham")', // URL action method của bạn
+                method: 'GET',
+                success: function(data) {
+                $('#SoSanhModal').find('.modal-body').html(data);
+                $('#SoSanhModal').modal('show');
+                }
                 });
                 });
 </script>

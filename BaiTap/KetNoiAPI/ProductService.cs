@@ -7,10 +7,11 @@ using BaiTap.Models;
 public class ProductService
 {
     private static readonly HttpClient client = new HttpClient();
+    private readonly string name = "";
 
     public async Task<string> GetProductImageAsync(string productName)
     {
-        string apiKey = "AIzaSyDs17oVwAv3Gvu3IZ_GoBKzxdjpYjZp95k"; // Thay thế bằng API Key của bạn
+        string apiKey = "AIzaSyCYRZEQ1wohBsBPSpiwWuP8EOlSOA82XoE"; // Thay thế bằng API Key của bạn
         string searchEngineId = "54a2eefbf7c49446b"; // Thay thế bằng Search Engine ID của bạn54a2eefbf7c49446b
         string searchUrl = $"https://www.googleapis.com/customsearch/v1?q={productName}&cx={searchEngineId}&searchType=image&key={apiKey}";
 
