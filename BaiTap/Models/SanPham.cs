@@ -18,8 +18,7 @@
             ChiTietPhieuXuat = new HashSet<ChiTietPhieuXuat>();
             ChiTietSanPham = new HashSet<ChiTietSanPham>();
             SanPhamKhuyenMai = new HashSet<SanPhamKhuyenMai>();
-            Sosanh = new HashSet<Sosanh>();
-            Sosanh1 = new HashSet<Sosanh>();
+           
             TonKho = new HashSet<TonKho>();
         }
 
@@ -76,12 +75,7 @@
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SanPhamKhuyenMai> SanPhamKhuyenMai { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Sosanh> Sosanh { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Sosanh> Sosanh1 { get; set; }
-
+       
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TonKho> TonKho { get; set; }
     }

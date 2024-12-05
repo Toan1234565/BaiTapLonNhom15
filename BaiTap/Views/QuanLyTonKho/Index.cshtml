@@ -1,0 +1,13 @@
+﻿@foreach (var item in Model)
+{
+    <tr>
+        <td>@item.TonKhoID</td>
+        <td>@item.SanPhamID</td>
+        <td>@item.SoLuongTon</td>
+        <td>@item.NgayCapNhat</td>
+        <td>
+            <!-- Button to trigger the modal -->
+            <button type="button" class="btn btn-primary edit-button" data-id="@item.TonKhoID">Sửa thông tin</button>
+        </td>
+    </tr>
+}

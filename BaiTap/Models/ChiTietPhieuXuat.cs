@@ -19,7 +19,13 @@ namespace BaiTap.Models
 
         public double? DonGia { get; set; }
 
-        public double? ThanhTien { get; set; }
+        public double? ThanhTien
+        {
+            get
+            {
+                return DonGia * SoLuong;
+            }
+        }
 
         public virtual PhieuXuat PhieuXuat { get; set; }
 

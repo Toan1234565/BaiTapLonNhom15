@@ -1,0 +1,87 @@
+﻿@model IEnumerable<BaiTap.Models.ChiTietPhieuNhap>
+
+@{
+    ViewBag.Title = "PhieuNhapKho";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>
+    danh sách phiếu nhập hàng
+</h2>
+<main id="main" class="main" style="width:100%">
+
+    <div class="pagetitle">
+        <h1>Dashboard</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section dashboard">
+        <div class="row">
+            <div class="col-lg-8" style="width:1200px">
+
+                <table class="table">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PhieuNhapID)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.SanPham)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.SanPham.TenSanPham)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.SoLuong)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.DonGia)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ThanhTien)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PhieuNhap.NgayNhap)
+                        </th>
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PhieuNhapID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SanPhamID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem =>item.SanPham.TenSanPham)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SoLuong)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DonGia)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ThanhTien)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PhieuNhap.NgayNhap)
+                            </td>
+                            <td>
+                                @Html.ActionLink("Edit", "Edit", new { id = item.ChiTietPhieuNhapID }) |
+                                @Html.ActionLink("Details", "Details", new { id = item.ChiTietPhieuNhapID }) |
+                                @Html.ActionLink("Delete", "Delete", new { id = item.ChiTietPhieuNhapID })
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+            </div>
+        </div>
+    </section>
+</main>

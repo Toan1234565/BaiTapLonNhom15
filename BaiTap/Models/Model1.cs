@@ -29,7 +29,7 @@ namespace BaiTap.Models
         public virtual DbSet<PhieuXuat> PhieuXuat { get; set; }
         public virtual DbSet<SanPham> SanPham { get; set; }
         public virtual DbSet<SanPhamKhuyenMai> SanPhamKhuyenMai { get; set; }
-        public virtual DbSet<Sosanh> Sosanh { get; set; }
+       
         public virtual DbSet<TaiKhoanKH> TaiKhoanKH { get; set; }
         public virtual DbSet<TonKho> TonKho { get; set; }
 
@@ -75,15 +75,7 @@ namespace BaiTap.Models
                 .Property(e => e.DieuKien)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<SanPham>()
-                .HasMany(e => e.Sosanh)
-                .WithOptional(e => e.SanPham)
-                .HasForeignKey(e => e.SPID1);
-
-            modelBuilder.Entity<SanPham>()
-                .HasMany(e => e.Sosanh1)
-                .WithOptional(e => e.SanPham1)
-                .HasForeignKey(e => e.SPID2);
+          
         }
     }
 }

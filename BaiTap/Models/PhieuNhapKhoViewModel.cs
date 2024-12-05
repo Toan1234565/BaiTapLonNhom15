@@ -20,5 +20,4 @@ namespace BaiTap.Models
         //public string DanhMucMoi { get; set; }
         //public string HangsxMoi { get; set; }
     }
-
 }

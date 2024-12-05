@@ -1,0 +1,136 @@
+﻿@model BaiTap.Models.PhieuNhapKhoViewModel
+
+@using (Html.BeginForm("ThemSanPham", "QuanLySanPham", FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "ThemSanPhamForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.SanPham.TenSanPham, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.SanPham.TenSanPham, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.SanPham.TenSanPham, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.SanPham.MoTa, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.SanPham.MoTa, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.SanPham.MoTa, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.SanPham.Gia, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.SanPham.Gia, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.SanPham.Gia, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.SanPham.DanhMucID, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @{
+                BaiTap.Models.Model1 db = new BaiTap.Models.Model1();
+                var DM = db.DanhMuc.ToList();
+            }
+            <select name="SanPham.DanhMucID" class="form-control">
+                @foreach (var item in DM)
+                {
+                    <option value="@item.DanhMucID" @(item.DanhMucID == Model.SanPham.DanhMucID ? "selected" : "")>@item.TenDanhMuc</option>
+                }
+            </select>
+            @Html.ValidationMessageFor(model => model.SanPham.DanhMucID, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.SanPham.HangID, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @{
+                var Hang = db.Hang.ToList();
+            }
+            <select name="SanPham.HangID" class="form-control">
+                @foreach (var item in Hang)
+                {
+                    <option value="@item.HangID" @(item.HangID == Model.SanPham.HangID ? "selected" : "")>@item.TenHang</option>
+                }
+            </select>
+            @Html.ValidationMessageFor(model => model.SanPham.HangID, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.ChiTietSanPham.ManHinh, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ChiTietSanPham.ManHinh, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ChiTietSanPham.ManHinh, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ChiTietSanPham.HeDieuHanh, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ChiTietSanPham.HeDieuHanh, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ChiTietSanPham.HeDieuHanh, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ChiTietSanPham.CameraTruoc, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ChiTietSanPham.CameraTruoc, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ChiTietSanPham.CameraTruoc, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ChiTietSanPham.CameraSau, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ChiTietSanPham.CameraSau, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ChiTietSanPham.CameraSau, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ChiTietSanPham.Chip, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ChiTietSanPham.Chip, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ChiTietSanPham.Chip, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ChiTietSanPham.RAM, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ChiTietSanPham.RAM, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ChiTietSanPham.RAM, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ChiTietSanPham.BoNhoTrong, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ChiTietSanPham.BoNhoTrong, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ChiTietSanPham.BoNhoTrong, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ChiTietSanPham.Sim, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ChiTietSanPham.Sim, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ChiTietSanPham.Sim, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ChiTietSanPham.Pin, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ChiTietSanPham.Pin, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ChiTietSanPham.Pin, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+    <button type="submit" class="btn btn-primary">Thêm Mới</button>
+}
