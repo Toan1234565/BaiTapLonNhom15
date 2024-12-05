@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using BaiTap.Models;
@@ -43,6 +44,63 @@ namespace BaiTap.Controllers
             }
 
         }
+        public async Task<ActionResult> PhieuNhapKho()
+        {
+            try
+            {
+                HttpResponseMessage kq = await client.GetAsync($"{apiUrl}/phieunhapkho");
+                if (kq.IsSuccessStatusCode)
+                {
+                    var phieu = await kq.Content.ReadAsAsync<IEnumerable<ChiTietPhieuNhap>>();
+                    if(phieu != null)
+                    {
+                        return View(phieu);
+                    }
+                    else
+                    {
+                        ViewBag.Thongbao = "co loi trong qua trinh lay danh sach";
+                        return View("Error");
+                    }
+                    
+                }
+                ViewBag.Thongbao = "Có lỗi xảy ra";
+                return View("Error");
+            }
+            catch(Exception ex)
+            {
+                ViewBag.Thongbao = $"Có lỗi khi lấy API: {ex.Message}";
+                return View("Error");
+            }
+        }
+       
+        public async Task<ActionResult> PhieuXuatKho()
+        {
+            try
+            {
+                HttpResponseMessage kq = await client.GetAsync($"{apiUrl}/phieuxuatkho");
+                if (kq.IsSuccessStatusCode)
+                {
+                    var phieu = await kq.Content.ReadAsAsync<IEnumerable<ChiTietPhieuXuat>>();
+                    if(phieu != null)
+                    {
+                        return View(phieu);
+                    }
+                    else
+                    {
+                        ViewBag.Thongbao = "co loi trong qua trinh lay danh sach";
+                        return View("Error");
+                    }
+                }
+                ViewBag.Thongbao = "Có lỗi xảy ra";
+                return View("Error");
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Thongbao = $"Có lỗi khi lấy API: {ex.Message}";
+                return View("Error");
+            }
+        }
+
         public ActionResult nhap()
         {
             return PartialView("nhap",new PhieuNhapKhoViewModel());
@@ -131,7 +189,7 @@ namespace BaiTap.Controllers
             }
             return View("Error");
         }
-
+       
 
     }
 

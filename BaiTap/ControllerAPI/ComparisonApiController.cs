@@ -17,10 +17,13 @@ namespace BaiTap.Controllers
 
         [HttpPost]
         [Route("compare")]
-        public async Task<IHttpActionResult> CompareProducts([FromBody] List<int> sanpham, [FromBody] List<Criteria> criteria)
+        public async Task<IHttpActionResult> CompareProducts([FromBody] ComparisonRequest request)
         {
             try
             {
+                var sanpham = request.Sanpham;
+                var criteria = request.Criteria;
+
                 var sp = await db.SanPham
                     .Where(x => sanpham.Contains(x.SanPhamID))
                     .Select(x => new SanPham

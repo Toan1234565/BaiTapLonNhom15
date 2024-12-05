@@ -88,7 +88,7 @@ namespace BaiTap.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadAsAsync<dynamic>();
-                return View("CompareResults", result.data);
+                return View("CompareResults", result);
             }
 
             return View("Error");

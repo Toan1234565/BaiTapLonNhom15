@@ -303,6 +303,7 @@
     <Compile Include="Models\ChiTietPhieuNhap.cs" />
     <Compile Include="Models\ChiTietPhieuXuat.cs" />
     <Compile Include="Models\ChiTietSanPham.cs" />
+    <Compile Include="Models\ComparisonRequest.cs" />
     <Compile Include="Models\Criteria.cs" />
     <Compile Include="Models\DanhMuc.cs" />
     <Compile Include="Models\DonHang.cs" />
@@ -641,6 +642,8 @@
     <Content Include="Views\QuanLySanPham\FromLoc.cshtml" />
     <Content Include="Views\QuanLySanPham\FromSua.cshtml" />
     <Content Include="Views\QuanLySanPham\FromSoSanh.cshtml" />
+    <Content Include="Views\QuanLyTonKho\PhieuNhapKho.cshtml" />
+    <Content Include="Views\QuanLyTonKho\PhieuXuatKho.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />

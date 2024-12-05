@@ -42,6 +42,39 @@ namespace BaiTap.Controllers
                 return InternalServerError(ex);
             }
         }
+        [HttpGet]
+        [Route("phieunhapkho")]
+        public IHttpActionResult PhieuNhapKho()
+        {
+            try
+            {
+                db.Configuration.ProxyCreationEnabled = false;
+                var ds = db.ChiTietPhieuNhap.ToList();
+                return Ok(ds);
+            }catch (Exception ex)
+            {
+                logger.Error(ex, "loi khi lay danh sach");
+                return InternalServerError(ex);
+            }
+        }
+
+
+        [HttpGet]
+        [Route("phieuxuatkho")]
+        public IHttpActionResult PhieuXuatKho()
+        {
+            try
+            {
+                db.Configuration.ProxyCreationEnabled = false;
+                var ds =db.ChiTietPhieuXuat.ToList();
+                return Ok(ds);
+            }
+            catch(Exception ex)
+            {
+                logger.Error(ex, "Loi khi lay danh sach");
+                return InternalServerError(ex); 
+            }
+        }
 
         // POST: api/quanlytonkho/nhap
         [HttpPost]
