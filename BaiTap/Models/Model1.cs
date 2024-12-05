@@ -18,6 +18,7 @@ namespace BaiTap.Models
         public virtual DbSet<ChiTietPhieuNhap> ChiTietPhieuNhap { get; set; }
         public virtual DbSet<ChiTietPhieuXuat> ChiTietPhieuXuat { get; set; }
         public virtual DbSet<ChiTietSanPham> ChiTietSanPham { get; set; }
+        public virtual DbSet<ChiTietKhachHang> ChiTietKhachHang { get; set; }
         public virtual DbSet<DanhMuc> DanhMuc { get; set; }
         public virtual DbSet<DonHang> DonHang { get; set; }
         public virtual DbSet<Hang> Hang { get; set; }

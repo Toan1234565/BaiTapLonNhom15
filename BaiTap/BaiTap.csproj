@@ -203,6 +203,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="ControllerAPI\ProductController.cs" />
+    <Compile Include="ControllerAPI\QuanLyKhachHangAPIController.cs" />
     <Compile Include="KetNoiAPI\ProductService.cs" />
     <Compile Include="ControllerAPI\QuanLySanPhamAPIController.cs" />
     <Compile Include="ControllerAPI\TimKiemAPIController.cs" />
@@ -231,6 +232,7 @@
     <Compile Include="Models\Admins.cs" />
     <Compile Include="Models\BaoCao.cs" />
     <Compile Include="Models\ChiTietDonHang.cs" />
+    <Compile Include="Models\ChiTietKhachHang.cs" />
     <Compile Include="Models\ChiTietPhieuNhap.cs" />
     <Compile Include="Models\ChiTietPhieuXuat.cs" />
     <Compile Include="Models\ChiTietSanPham.cs" />
@@ -512,10 +514,13 @@
     <Content Include="Views\QuanLySanPham\Error.cshtml" />
     <Content Include="Views\Product\ProductDetails.cshtml" />
     <Content Include="Views\Product\Index.cshtml" />
+    <Content Include="Views\QuanLyKhachHang\DSChiTietKH.cshtml" />
+    <Content Include="Views\QuanLyKhachHang\KhachHang.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
     <Folder Include="img\" />
+    <Folder Include="Views\QuanLyKhachHangAPI\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
