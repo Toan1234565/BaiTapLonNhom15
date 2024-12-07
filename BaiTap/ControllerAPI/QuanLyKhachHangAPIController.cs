@@ -25,7 +25,6 @@ namespace BaiTap.ControllerAPI
         {
             try
             {
-                
                 db.Configuration.ProxyCreationEnabled = false;
                 // lay danh sach khach hang tu csdl
                 var khachhang = db.KhachHang.ToList();
@@ -106,4 +105,3 @@ namespace BaiTap.ControllerAPI
         }
     }
 }
-
