@@ -11,11 +11,13 @@ namespace BaiTap.Models
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public KhachHang()
-        {
+        {   
+            ChiTietKhachHang = new HashSet<ChiTietKhachHang>();
             DonHang = new HashSet<DonHang>();
             LichSuDonHang = new HashSet<LichSuDonHang>();
             PhieuXuat = new HashSet<PhieuXuat>();
             TaiKhoanKH = new HashSet<TaiKhoanKH>();
+           
         }
 
         public int KhachHangID { get; set; }
@@ -37,8 +39,9 @@ namespace BaiTap.Models
 
         public int DiemTichLuy {  get; set; }
 
-        
-       
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ChiTietKhachHang> ChiTietKhachHang { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DonHang> DonHang { get; set; }
