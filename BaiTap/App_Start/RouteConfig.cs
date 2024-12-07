@@ -19,6 +19,11 @@ namespace BaiTap
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
+            routes.MapRoute(
+                name: "SOSANH",
+                url: "TinKiem/Sosanh/{id1}/{id2}",
+                defaults: new {Controller = "TimKiem", Action = "Sosanh"}
+                );
         }
     }
 }

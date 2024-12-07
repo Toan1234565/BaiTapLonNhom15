@@ -42,12 +42,46 @@ namespace BaiTap.Controllers
                 return InternalServerError(ex);
             }
         }
+        [HttpGet]
+        [Route("phieunhapkho")]
+        public IHttpActionResult PhieuNhapKho()
+        {
+            try
+            {
+                db.Configuration.ProxyCreationEnabled = false;
+                var ds = db.ChiTietPhieuNhap.ToList();
+                return Ok(ds);
+            }catch (Exception ex)
+            {
+                logger.Error(ex, "loi khi lay danh sach");
+                return InternalServerError(ex);
+            }
+        }
+
+
+        [HttpGet]
+        [Route("phieuxuatkho")]
+        public IHttpActionResult PhieuXuatKho()
+        {
+            try
+            {
+                db.Configuration.ProxyCreationEnabled = false;
+                var ds =db.ChiTietPhieuXuat.ToList();
+                return Ok(ds);
+            }
+            catch(Exception ex)
+            {
+                logger.Error(ex, "Loi khi lay danh sach");
+                return InternalServerError(ex); 
+            }
+        }
 
         // POST: api/quanlytonkho/nhap
         [HttpPost]
         [Route("nhap")]
         public IHttpActionResult Nhap(PhieuNhapKhoViewModel model)
         {
+            db.Configuration.ProxyCreationEnabled = false;
             try
             {
                 if (model.SanPhamID.HasValue)
@@ -58,7 +92,7 @@ namespace BaiTap.Controllers
                         return RedirectToRoute("NhapSanPhamCoSan", new { id = model.SanPhamID.Value });
                     }
                 }
-                return RedirectToRoute("DefaultApi", new {controler = "QuanLyTonKho", action="NhapKho"});
+                return RedirectToRoute("DefaultApi", new { controler = "QuanLyTonKho", action = "NhapKho" });
             }
             catch (Exception ex)
             {
@@ -72,6 +106,7 @@ namespace BaiTap.Controllers
         [Route("nhapsanphamcosan")]
         public IHttpActionResult NhapSanPhamCoSan(int id, PhieuNhapKhoViewModel model)
         {
+            db.Configuration.ProxyCreationEnabled = false;
             try
             {
                 if (ModelState.IsValid)
@@ -114,6 +149,7 @@ namespace BaiTap.Controllers
         [Route("nhapkho")]
         public IHttpActionResult NhapKho(PhieuNhapKhoViewModel model)
         {
+            db.Configuration.ProxyCreationEnabled = false;
             try
             {
                 if (ModelState.IsValid)
@@ -151,6 +187,7 @@ namespace BaiTap.Controllers
         [Route("thongtinsp/{id}")]
         public IHttpActionResult ThongTinSP(int id)
         {
+            db.Configuration.ProxyCreationEnabled = false;
             try
             {
                 var sanpham = db.SanPham.Where(c => c.SanPhamID == id).ToList();
@@ -172,6 +209,7 @@ namespace BaiTap.Controllers
         [Route("xuatkho")]
         public IHttpActionResult XuatKho()
         {
+
             return Ok("Chức năng xuất kho.");
         }
 
@@ -180,6 +218,7 @@ namespace BaiTap.Controllers
         [Route("sapxeptang")]
         public IHttpActionResult SapxepTang()
         {
+            db.Configuration.ProxyCreationEnabled = false;
             try
             {
                 var kq = db.TonKho.OrderBy(x => x.SoLuongTon).ToList();
@@ -197,6 +236,7 @@ namespace BaiTap.Controllers
         [Route("sapxepgiam")]
         public IHttpActionResult SapxepGiam()
         {
+            db.Configuration.ProxyCreationEnabled = false;
             try
             {
                 var kq = db.TonKho.OrderByDescending(x => x.SoLuongTon).ToList();
@@ -214,6 +254,7 @@ namespace BaiTap.Controllers
         [Route("locngay")]
         public IHttpActionResult LocNgay(DateTime? Time, DateTime? enddate)
         {
+            db.Configuration.ProxyCreationEnabled = false;
             try
             {
                 var tonkho = db.TonKho.AsQueryable();
@@ -239,6 +280,7 @@ namespace BaiTap.Controllers
         [Route("suatonkho/{id}")]
         public IHttpActionResult SuaTonKho(int id)
         {
+            db.Configuration.ProxyCreationEnabled = false;
             try
             {
                 var tonkho = db.TonKho.Find(id);
@@ -259,6 +301,7 @@ namespace BaiTap.Controllers
         [Route("suatonkho/{id}")]
         public IHttpActionResult SuaTonKho(int id, TonKho ton)
         {
+            db.Configuration.ProxyCreationEnabled = false;
             try
             {
                 var update = db.TonKho.Find(id);

@@ -1,4 +1,4 @@
-/**
+﻿/**
 * Template Name: NiceAdmin
 * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
 * Updated: Apr 20 2024 with Bootstrap v5.3.3
@@ -12,6 +12,51 @@
 :root {
   scroll-behavior: smooth;
 }
+/* Đảm bảo rằng body và html chiếm hết chiều rộng và chiều cao */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Đảm bảo rằng phần thân chính chiếm hết chiều rộng và chiều cao */
+.main {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Đảm bảo rằng phần nội dung và menu luôn chiếm hết chiều rộng màn hình */
+.section.dashboard {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.row {
+    display: flex;
+    flex-grow: 1;
+    margin: 0;
+    width: 100%;
+}
+
+.col-lg-8 {
+    width: 100% !important;
+}
+
+.card.recent-sales.overflow-auto {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 100%;
+}
+
+.filter {
+    display: flex;
+    justify-content: flex-end;
+}
+
+
 
 body {
   font-family: "Open Sans", sans-serif;
