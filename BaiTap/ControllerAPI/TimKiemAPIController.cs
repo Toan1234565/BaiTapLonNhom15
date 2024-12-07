@@ -4,6 +4,8 @@ using NLog;
 using System;
 using System.Data.Entity;
 using System.Linq;
+using System.Net.Mail;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -41,12 +43,10 @@ namespace BaiTap.Controllers
 
            
         }
-
         [HttpGet]
         [Route("locsanpham")]
-        public IHttpActionResult LocSP(string name = null, int? IDHang = null, int? IDDanhMuc = null, double? to = null, double? from = null, string sx = null)
+        public IHttpActionResult LocSP(string name = null, int? IDHang = null, int? IDDanhMuc = null, double? to = null, double? from = null, string sx = null, int page = 1, int pageSize = 10)
         {
-
             try
             {
                 db.Configuration.ProxyCreationEnabled = false;
@@ -84,22 +84,35 @@ namespace BaiTap.Controllers
                         kq = kq.OrderBy(sp => sp.Gia);
                         break;
                 }
-                var result = kq.ToList();
-                if (result.Count == 0)
+
+                // Tính năng phân trang
+                var totalItems = kq.Count();
+                var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+                var pagedResult = kq.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+                if (pagedResult.Count == 0)
                 {
                     logger.Info("khong tim thay thong tin san pham thoa ma dieu kien loc");
                     return NotFound();
                 }
                 logger.Info("lay danh sach thanh cong");
-                return Ok(kq.ToList());
+
+                var response = new
+                {
+                    TotalItems = totalItems,
+                    TotalPages = totalPages,
+                    Items = pagedResult
+                };
+
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 logger.Error(ex, "lay danh sach that bai");
                 return InternalServerError(ex);
             }
-
         }
+
 
 
         [HttpGet]

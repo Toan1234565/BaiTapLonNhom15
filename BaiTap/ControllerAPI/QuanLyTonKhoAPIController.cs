@@ -10,6 +10,8 @@ using System.Web.Http;
 using NLog;
 using System.Data.Entity;
 using BaiTap.Services;
+using System.Net.Mail;
+
 
 
 namespace BaiTap.Controllers
@@ -401,22 +403,22 @@ namespace BaiTap.Controllers
             // Gửi cảnh báo cho người quản lý nếu có sản phẩm đạt mức cảnh báo
             if (alertProducts.Any())
             {
-                // Gửi email hoặc SMS cảnh báo (có thể thêm phương thức gửi cảnh báo ở đây)
+                string subject = "Cảnh báo tồn kho";
+                string body = "Có sản phẩm tồn kho nằm ngoài ngưỡng định sẵn.";
+                SendEmailAlert("nguuentoanbs2k4@gmail.com", subject, body);
             }
 
             return alertProducts;
         }
 
+
         [HttpGet]
         [Route("check")]
-        public async Task<IHttpActionResult> CheckInventory()
+        public async Task<IHttpActionResult> CheckInventory([FromUri] int lowStockThreshold, [FromUri] int highStockThreshold)
         {
             db.Configuration.ProxyCreationEnabled = false;
             try
             {
-                int lowStockThreshold = 10; // Ngưỡng tồn kho thấp
-                int highStockThreshold = 100; // Ngưỡng tồn kho cao
-
                 var alertProducts = await CheckInventoryLevels(lowStockThreshold, highStockThreshold);
                 if (alertProducts == null || !alertProducts.Any())
                 {
@@ -431,6 +433,32 @@ namespace BaiTap.Controllers
                 return InternalServerError(ex);
             }
         }
+
+        public void SendEmailAlert(string toEmail, string subject, string body)
+        {
+            var fromAddress = new MailAddress("nguuentoanbs2k4@gmail.com", "From Name");
+            var toAddress = new MailAddress(toEmail, "To Name");
+            const string fromPassword = "Toanbg2k4";
+
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+            };
+            using (var message = new MailMessage(fromAddress, toAddress)
+            {
+                Subject = subject,
+                Body = body
+            })
+            {
+                smtp.Send(message);
+            }
+        }
+
     }
 }
 

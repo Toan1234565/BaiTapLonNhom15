@@ -21,12 +21,14 @@ namespace BaiTap.Controllers
 
         // GET: api/quanlysanpham/sanpham
         [HttpGet]
-        [Route("sanpham")]
+        [Route("sanpham")] 
+        // quản lý vòng đời 
         public async Task<IHttpActionResult> SanPham()
         {
             try
+
             {
-                // Tắt proxy động
+                // Tắt proxy động tối ưu hóa hiệu xuất 
                 db.Configuration.ProxyCreationEnabled = false;
                 // lay danh sach san pham tu csdl
                 var sanpham = db.SanPham.ToList();
@@ -263,6 +265,7 @@ namespace BaiTap.Controllers
         [Route("xoa/{id}")]
         public async Task<IHttpActionResult> XoaSanPham(int id)
         {
+            db.Configuration.ProxyCreationEnabled = false;
             using (var xoa = db.Database.BeginTransaction())
             {
 
