@@ -8,12 +8,16 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using NLog;
+using System.Data.Entity;
+using BaiTap.Services;
+
 
 namespace BaiTap.Controllers
 {
     [RoutePrefix("api/quanlytonkho")]
     public class QuanLyTonKhoAPIController : ApiController
     {
+        private readonly ProductService12 check = new ProductService12();
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private Model1 db = new Model1();
 
@@ -51,7 +55,8 @@ namespace BaiTap.Controllers
                 db.Configuration.ProxyCreationEnabled = false;
                 var ds = db.ChiTietPhieuNhap.ToList();
                 return Ok(ds);
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 logger.Error(ex, "loi khi lay danh sach");
                 return InternalServerError(ex);
@@ -66,15 +71,70 @@ namespace BaiTap.Controllers
             try
             {
                 db.Configuration.ProxyCreationEnabled = false;
-                var ds =db.ChiTietPhieuXuat.ToList();
+                var ds = db.ChiTietPhieuXuat.ToList();
                 return Ok(ds);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.Error(ex, "Loi khi lay danh sach");
-                return InternalServerError(ex); 
+                return InternalServerError(ex);
             }
         }
+
+        [HttpGet]
+        [Route("sanphamxuatkho/{id}")]
+        public async Task<IHttpActionResult> SanPhamXuatKho(int id)
+        {
+            db.Configuration.ProxyCreationEnabled = false;
+            var phieuxuat = await db.PhieuXuat.Include(px => px.ChiTietPhieuXuat).FirstOrDefaultAsync(px => px.PhieuXuatID == id);
+            if (phieuxuat == null)
+            {
+                return NotFound();
+            }
+            return Ok(phieuxuat);
+        }
+
+
+        public async Task<PhieuXuat> CreateExportAsync(PhieuXuat phieuxuat)
+        {
+            // Tìm kiếm khách hàng dựa trên số điện thoại
+            var khachHang = await db.KhachHang.FirstOrDefaultAsync(kh => kh.SoDienThoai == phieuxuat.KhachHang.SoDienThoai);
+            if (khachHang == null)
+            {
+                // Tạo mới khách hàng nếu chưa tồn tại
+                khachHang = new KhachHang
+                {
+                    SoDienThoai = phieuxuat.KhachHang.SoDienThoai,
+                    HoTen = phieuxuat.KhachHang.HoTen
+                };
+                db.KhachHang.Add(khachHang);
+                await db.SaveChangesAsync();
+            }
+
+            // Thiết lập thông tin khách hàng cho phiếu xuất
+            phieuxuat.KhachHangID = khachHang.KhachHangID;
+            phieuxuat.KhachHang = khachHang;
+
+            // Kiểm tra và cập nhật số lượng tồn kho
+            foreach (var chiTiet in phieuxuat.ChiTietPhieuXuat)
+            {
+                var tonkho = await db.TonKho.FirstOrDefaultAsync(tk => tk.SanPhamID == chiTiet.SanPhamID);
+                if (tonkho == null || tonkho.SoLuongTon < chiTiet.SoLuong)
+                {
+                    throw new InvalidOperationException("Số lượng không đủ để xuất kho.");
+                }
+                tonkho.SoLuongTon -= chiTiet.SoLuong;
+            }
+
+            // Cập nhật điểm tích lũy cho khách hàng
+            khachHang.DiemTichLuy += (int)(phieuxuat.ChiTietPhieuXuat.Sum(ct => ct.ThanhTien / 1000));
+
+            // Thêm phiếu xuất kho vào cơ sở dữ liệu
+            db.PhieuXuat.Add(phieuxuat);
+            await db.SaveChangesAsync();
+            return phieuxuat;
+        }
+
 
         // POST: api/quanlytonkho/nhap
         [HttpPost]
@@ -311,8 +371,8 @@ namespace BaiTap.Controllers
                 }
                 update.SoLuongTon = ton.SoLuongTon;
                 db.SaveChanges();
-
                 return Ok("Cập nhật thông tin tồn kho thành công.");
+                
             }
             catch (Exception ex)
             {
@@ -323,5 +383,59 @@ namespace BaiTap.Controllers
         }
 
         // GET: api/quanlytonkho/checkkho
+
+
+
+        public async Task<List<TonKho>> CheckInventoryLevels(int lowStockThreshold, int highStockThreshold)
+        {
+            var lowStockProducts = db.TonKho
+                .Where(t => t.SoLuongTon <= lowStockThreshold)
+                .ToList();
+
+            var highStockProducts = db.TonKho
+                .Where(t => t.SoLuongTon >= highStockThreshold)
+                .ToList();
+
+            var alertProducts = lowStockProducts.Concat(highStockProducts).ToList();
+
+            // Gửi cảnh báo cho người quản lý nếu có sản phẩm đạt mức cảnh báo
+            if (alertProducts.Any())
+            {
+                // Gửi email hoặc SMS cảnh báo (có thể thêm phương thức gửi cảnh báo ở đây)
+            }
+
+            return alertProducts;
+        }
+
+        [HttpGet]
+        [Route("check")]
+        public async Task<IHttpActionResult> CheckInventory()
+        {
+            db.Configuration.ProxyCreationEnabled = false;
+            try
+            {
+                int lowStockThreshold = 10; // Ngưỡng tồn kho thấp
+                int highStockThreshold = 100; // Ngưỡng tồn kho cao
+
+                var alertProducts = await CheckInventoryLevels(lowStockThreshold, highStockThreshold);
+                if (alertProducts == null || !alertProducts.Any())
+                {
+                    return NotFound();
+                }
+
+                return Ok(alertProducts);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Lỗi khi cập nhật thông tin tồn kho.");
+                return InternalServerError(ex);
+            }
+        }
     }
 }
+
+
+
+
+
+

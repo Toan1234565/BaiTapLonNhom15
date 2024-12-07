@@ -1,4 +1,6 @@
-﻿using System.Net.Http.Headers;
+﻿using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
+using System.Net.Http.Headers;
 using System.Web.Http;
 
 public static class WebApiConfig
@@ -8,6 +10,8 @@ public static class WebApiConfig
        
         // Cấu hình các tuyến đường Web API
         config.MapHttpAttributeRoutes();
+        config.Formatters.JsonFormatter.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore; 
+        config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 
         config.Routes.MapHttpRoute(
             name: "DefaultApi",

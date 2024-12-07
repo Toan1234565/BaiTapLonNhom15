@@ -1,0 +1,52 @@
+﻿
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Biểu Đồ Đường</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@2.0.0"></script>
+</head>
+<body>
+    <h2>Biểu Đồ Đường: Sự Biến Động của Tồn Kho Theo Thời Gian</h2>
+    <canvas id="lineChart" width="800" height="400"></canvas>
+    <script>
+        // Giả lập dữ liệu trực tiếp trong script
+        var labels = ["2024-11-10", "2024-11-11", "2024-11-12", "2024-11-13", "2024-11-14", "2024-11-15", "2024-11-16"];
+        var data = [10, 15, 12, 14, 18, 20, 25];
+
+        console.log("Labels: ", labels);
+        console.log("Data: ", data);
+
+        var ctx = document.getElementById('lineChart').getContext('2d');
+        var lineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Số Lượng Tồn',
+                    data: data,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

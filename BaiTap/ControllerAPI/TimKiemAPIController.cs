@@ -46,7 +46,7 @@ namespace BaiTap.Controllers
         [Route("locsanpham")]
         public IHttpActionResult LocSP(string name = null, int? IDHang = null, int? IDDanhMuc = null, double? to = null, double? from = null, string sx = null)
         {
-          
+
             try
             {
                 db.Configuration.ProxyCreationEnabled = false;
@@ -85,7 +85,7 @@ namespace BaiTap.Controllers
                         break;
                 }
                 var result = kq.ToList();
-                if(result.Count == 0)
+                if (result.Count == 0)
                 {
                     logger.Info("khong tim thay thong tin san pham thoa ma dieu kien loc");
                     return NotFound();
@@ -93,13 +93,14 @@ namespace BaiTap.Controllers
                 logger.Info("lay danh sach thanh cong");
                 return Ok(kq.ToList());
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
-                logger.Error(ex,"lay danh sach that bai");
-                return InternalServerError(ex); 
+                logger.Error(ex, "lay danh sach that bai");
+                return InternalServerError(ex);
             }
-            
+
         }
+
 
         [HttpGet]
         [Route("giatang")]

@@ -1,0 +1,33 @@
+﻿@*@model IEnumerable<BaiTap.Models.TonKho>
+
+<h2>Biểu Đồ Số Lượng Sản Phẩm</h2>
+<canvas id="productChart" width="800" height="400"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var labels = @Html.Raw(Json.Encode(Model.Select(x => x.TonKhoID ).ToList()));
+    var quantities = @Html.Raw(Json.Encode(Model.Select(x => x.SoLuongTon).ToList()));
+
+    var ctx = document.getElementById('productChart').getContext('2d');
+    var productChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Số lượng ton',
+                data: quantities,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>*@

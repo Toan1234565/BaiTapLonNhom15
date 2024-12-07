@@ -1,0 +1,41 @@
+﻿@model List<BaiTap.Models.ChiTietPhieuXuat>
+
+@{
+    ViewBag.Title = "Nhập Kho";
+}
+
+<h2>Nhập Kho</h2>
+
+<form enctype="multipart/form-data" asp-action="UploadFile" asp-controller="Import" method="post">
+    <div class="form-group">
+        <label for="file">Chọn file phiếu nhập:</label>
+        <input type="file" id="file" name="file" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Tải Lên</button>
+</form>
+
+@if (Model != null && Model.Any())
+{
+    <h3>Thông Tin Sản Phẩm</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Mã Sản Phẩm</th>
+                <th>Số Lượng</th>
+                <th>Đơn Giá</th>
+                <th>Thành Tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td>@product.SanPhamID</td>
+                    <td>@product.SoLuong</td>
+                    <td>@product.DonGia</td>
+                    <td>@product.ThanhTien</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

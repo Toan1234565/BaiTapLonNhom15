@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "Biểu Đồ Nhiệt Độ Tồn Kho";
+    var heatmapData = ViewBag.HeatmapData;
+}
+
+<h2>Biểu Đồ Nhiệt Độ Tồn Kho Theo Thời Gian</h2>
+
+<canvas id="heatmapChart" width="800" height="600"></canvas>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var ctx = document.getElementById('heatmapChart').getContext('2d');
+
+        var heatmapData = @Html.Raw(Json.Encode(heatmapData));
+
+        var labels = heatmapData.map(h => h.Ngay);
+        var datasets = heatmapData.map(h => ({
+            label: h.Ngay,
+            data: h.Values,
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+        }));
+
+        new Chart(ctx, {
+            type: 'heatmap', // Biểu đồ nhiệt độ
+            data: {
+                labels: labels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Số Lượng Tồn Kho Theo Thời Gian'
+                    }
+                }
+            }
+        });
+    </script>
+}
