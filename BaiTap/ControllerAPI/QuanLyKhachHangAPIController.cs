@@ -18,7 +18,11 @@ namespace BaiTap.ControllerAPI
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private Model1 db = new Model1();
 
+<<<<<<< HEAD
+        // GET: api/quanlykhachhang/khachhang
+=======
         // GET: api/quanlysanpham/sanpham
+>>>>>>> 8c32298b5dc2bf0dbb725d6525f3ef1ee87fb3de
         [HttpGet]
         [Route("khachhang")]
         public async Task<IHttpActionResult> KhachHang()
@@ -28,6 +32,16 @@ namespace BaiTap.ControllerAPI
                 // Tắt proxy động
                 db.Configuration.ProxyCreationEnabled = false;
                 // lay danh sach san pham tu csdl
+<<<<<<< HEAD
+                var khachhang = db.KhachHang.ToList(); 
+                await db.SaveChangesAsync();
+                logger.Info("Lấy danh sách khách hàng thành công.");
+                return Ok(khachhang);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Lỗi khi lấy danh sách khách hàng.");
+=======
                 var sanpham = db.SanPham.ToList();
 
                 logger.Info("Lấy danh sách sản phẩm thành công.");
@@ -36,6 +50,7 @@ namespace BaiTap.ControllerAPI
             catch (Exception ex)
             {
                 logger.Error(ex, "Lỗi khi lấy danh sách sản phẩm.");
+>>>>>>> 8c32298b5dc2bf0dbb725d6525f3ef1ee87fb3de
                 return InternalServerError(ex);
             }
         }

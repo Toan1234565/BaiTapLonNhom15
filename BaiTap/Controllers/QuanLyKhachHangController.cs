@@ -31,8 +31,11 @@ namespace BaiTap.Controllers
             return View("Error");
         }
 
+<<<<<<< HEAD
+=======
 
         // GET: QuanLySanPham/ChiTiet/{id}
+>>>>>>> 8c32298b5dc2bf0dbb725d6525f3ef1ee87fb3de
         public async Task<ActionResult> ChiTietKH(int id)
         {
             HttpResponseMessage response = await client.GetAsync($"https://localhost:44383/api/quanlykhachhang/chitiet/{id}");
@@ -41,7 +44,11 @@ namespace BaiTap.Controllers
                 var khachhang = await response.Content.ReadAsAsync<List<ChiTietKhachHang>>();
                 if (khachhang != null & khachhang.Count > 0)
                 {
+<<<<<<< HEAD
+                    return View(khachhang);
+=======
                     return PartialView("ChiTietKH", khachhang);
+>>>>>>> 8c32298b5dc2bf0dbb725d6525f3ef1ee87fb3de
                 }
                 ViewBag.Thongbao = "khong tim thay";
                 return View("Error");
