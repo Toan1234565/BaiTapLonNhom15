@@ -271,17 +271,11 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-<<<<<<< HEAD
     <Compile Include="ControllerAPI\ProductController.cs" />
     <Compile Include="ControllerAPI\QuanLyKhachHangAPIController.cs" />
-<<<<<<< HEAD
-=======
-=======
     <Compile Include="ControllerAPI\ComparisonApiController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\QuanLyTonKhoController.cs" />
->>>>>>> c2f37e78b38a361b2ada22ade78f1e3f7344e8bd
->>>>>>> 8c32298b5dc2bf0dbb725d6525f3ef1ee87fb3de
     <Compile Include="KetNoiAPI\ProductService.cs" />
     <Compile Include="ControllerAPI\QuanLySanPhamAPIController.cs" />
     <Compile Include="ControllerAPI\TimKiemAPIController.cs" />
@@ -634,15 +628,11 @@
     <Content Include="Views\QuanLyKhuyenMai\XoaKhuyenMai.cshtml" />
     <Content Include="Views\QuanLyKhuyenMai\ChiTietKM.cshtml" />
     <Content Include="Views\QuanLyKhachHang\SuaKH.cshtml" />
-<<<<<<< HEAD
     <Content Include="Views\QuanLySanPham\Error.cshtml" />
     <Content Include="Views\Product\ProductDetails.cshtml" />
     <Content Include="Views\Product\Index.cshtml" />
     <Content Include="Views\QuanLyKhachHang\DSChiTietKH.cshtml" />
     <Content Include="Views\QuanLyKhachHang\KhachHang.cshtml" />
-<<<<<<< HEAD
-=======
-=======
     <Content Include="Views\Products\Compare.cshtml" />
     <Content Include="Views\Products\_ProductListPartial.cshtml" />
     <Content Include="Views\Products\CompareProducts.cshtml" />
@@ -662,8 +652,6 @@
     <Content Include="Views\QuanLySanPham\FromSoSanh.cshtml" />
     <Content Include="Views\QuanLyTonKho\PhieuNhapKho.cshtml" />
     <Content Include="Views\QuanLyTonKho\PhieuXuatKho.cshtml" />
->>>>>>> c2f37e78b38a361b2ada22ade78f1e3f7344e8bd
->>>>>>> 8c32298b5dc2bf0dbb725d6525f3ef1ee87fb3de
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
