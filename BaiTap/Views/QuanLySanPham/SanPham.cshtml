@@ -96,7 +96,7 @@
     <div>
         <div class="form-actions no-color">
             <button type="button" class="btn btn-primary SoSanh" data-toggle="modal" data-target="#SosanhModall">
-                So Sanh 
+                So Sanh
             </button>
             <div class="modal fade" id="SoSanhModal" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
@@ -224,22 +224,27 @@
                                     </td>
 
                                     <td>
-                                        <div class="form-actions no-color">
-                                            <button type="button" class="btn btn-primary edit-button" data-id="@item.SanPhamID" data-toggle="modal" data-target="#SuaSanPhamModal">
-                                                Sửa
-                                            </button>
-                                            <div class="modal fade" id="SuaSanPhamModal" tabindex="-1" role="dialog">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="SuaSanPhamTitle">Sửa sản phẩm</h5>
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <!-- Nội dung được tải động qua AJAX -->
-                                                        </div>
+                                        <!-- Button to trigger modal -->
+                                        <button type="button" class="btn btn-primary sua edit-button" data-id="@item.SanPhamID">
+                                            Sửa 
+                                        </button>
+
+                                        <!-- Modal Structure -->
+                                        <div class="modal fade" id="Sua" tabindex="-1" role="dialog">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="SuaTonKho">Sửa thông tin san pham</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <!-- Content loaded dynamically via AJAX -->
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                                        <button type="button" class="btn btn-primary" id="Sua">Cập nhật</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -273,34 +278,67 @@
                                 </tr>
                             }
                         </tbody>
+
                     </table>
+                    <h2>Biểu Đồ Số Lượng Sản Phẩm</h2>
+                    <canvas id="productChart" width="800" height="300"></canvas>
 
-                </div>
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                    <script>
+                        var labels = @Html.Raw(Json.Encode(Model.Select(p => p.TenSanPham).ToList()));
+                        var quantities = @Html.Raw(Json.Encode(Model.Select(p => p.Soluong).ToList()));
 
-            </div>
-        </div>
-        <
-        <div class="form-actions no-color">
-            <button type="button" class="btn btn-primary Themmoi" data-toggle="modal">
-                Thêm sản phẩm
-            </button>
-            <div class="modal fade" id="ThemMoi" tabindex="-1" role="dialog">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="ThemTonKho">Thong tin san pham</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                        var ctx = document.getElementById('productChart').getContext('2d');
+                        var productChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Số lượng sản phẩm',
+                                    data: quantities,
+                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    </script>
+
+
+                    <div class="form-actions no-color">
+                        <button type="button" class="btn btn-primary Themmoi" data-toggle="modal">
+                            Thêm sản phẩm
+                        </button>
+                        <div class="modal fade" id="ThemMoi" tabindex="-1" role="dialog">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="ThemTonKho">Thong tin san pham</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Content loaded dynamically via AJAX -->
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
-                        <div class="modal-body">
-                            <!-- Content loaded dynamically via AJAX -->
-                        </div>
-
                     </div>
                 </div>
+
             </div>
         </div>
+
 
     </section>
 </main><!-- End #main -->
@@ -310,22 +348,22 @@
 <script>
     $(document).ready(function() {
         // Mở modal và tải nội dung thông qua AJAX
-        $('.edit-button').click(function() {
-            var productId = $(this).data('id');
-            $.ajax({
-                url: '@Url.Action("Sua", "QuanLySanPham")/' + productId, // URL action method của bạn
-                method: 'GET',
-                success: function(data) {
-                    $('#SuaSanPhamModal').find('.modal-body').html(data);
-                    $('#SuaSanPhamModal').modal('show');
-                }
-            });
+         $('.edit-button').click(function() {
+             var productId = $(this).data('id');
+             $.ajax({
+                 url: '@Url.Action("SuaThongTin", "QuanLySanPham")/' + productId,
+                 method: 'GET',
+                 success: function(data) {
+                     $('#Sua').find('.modal-body').html(data);
+                     $('#Sua').modal('show');
+                 }
+             });
+         });
+        $('#Sua').on('click', '#Sua', function () {
+            $('#SuaSanPhamForm').submit();
         });
 
-        // Xử lý form submission
-        $('#SuaSanPhamModal').on('click', '#Luu', function() {
-            $('#SuaSanPhamFrom').submit();
-        });
+
     });
     $(document).ready(function () {
         // Open the view modal and load product information
@@ -403,6 +441,7 @@
                 });
                 });
 </script>
+
 
 
 

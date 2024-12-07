@@ -9,7 +9,6 @@ using System.Web.Http.Description;
 using NLog;
 using System.Data.Entity;
 using System.Threading.Tasks;
-using BaiTap.Services;
 
 namespace BaiTap.Controllers
 {
@@ -31,8 +30,9 @@ namespace BaiTap.Controllers
                 db.Configuration.ProxyCreationEnabled = false;
                 // lay danh sach san pham tu csdl
                 var sanpham = db.SanPham.ToList();
-                
+
                 logger.Info("Lấy danh sách sản phẩm thành công.");
+                // trả về dưới dạng json 
                 return Ok(sanpham);
             }
             catch (Exception ex)
@@ -44,12 +44,13 @@ namespace BaiTap.Controllers
 
         // GET: api/quanlysanpham/sanpham/{id}
         [HttpGet]
-        [Route("sanpham/{id}")]
+        [Route("suasanpham/{id}")]
         public IHttpActionResult GetSanPham(int id)
         {
+            db.Configuration.ProxyCreationEnabled = false;
             try
             {
-                db.Configuration.ProxyCreationEnabled = false;
+               
                 var sp = db.SanPham.Find(id);
                 if (sp == null)
                 {
@@ -65,60 +66,64 @@ namespace BaiTap.Controllers
                 return InternalServerError(ex);
             }
         }
-
+        
         // POST: api/quanlysanpham/sua
-        [HttpPut]
-        [Route("sua")]
-        public async Task<IHttpActionResult> Sua(SuaSanPham sp)
+        [HttpPost]
+        [Route("suasanpham{id}")]
+        public async Task<IHttpActionResult> Sua(int id, SanPham sanpham)
         {
-            var sanpham = sp.SanPham;
-            var tonkho = sp.TonKho;
-
-            if (string.IsNullOrEmpty(sanpham.TenSanPham))
+            db.Configuration.ProxyCreationEnabled = false;
+            try
             {
-                return BadRequest("Tên sản phẩm không được để trống");
+                
+                //var tonkho = sp.TonKho;
+
+                //if (string.IsNullOrEmpty(sanpham.TenSanPham))
+                //{
+                //    return BadRequest("Tên sản phẩm không được để trống");
+                //}
+
+                //if (sanpham.Soluong < tonkho.SoLuongTon)
+                //{
+                //    return BadRequest("Tổng số lượng sản phẩm không thể nhỏ hơn số lượng sản phẩm tồn kho");
+                //}
+
+                //if (sanpham.Soluong < 0)
+                //{
+                //    return BadRequest("Số lượng không được nhỏ hơn 0");
+                //}
+
+                //if (sanpham.Gia < 0)
+                //{
+                //    return BadRequest("Giá không được nhỏ hơn 0");
+                //}
+               
+                var update = db.SanPham.Find(id);
+                if (update == null)
+                {
+                    return NotFound();
+                }
+
+                update.TenSanPham = sanpham.TenSanPham;
+                update.Soluong = sanpham.Soluong;
+                update.Gia = sanpham.Gia;
+                update.MoTa = sanpham.MoTa;
+                update.HangID = sanpham.HangID;
+                update.DanhMucID = sanpham.DanhMucID;
+
+              db.SaveChanges();
+               
+                logger.Info("Cập nhật sản phẩm thành công. ID: {0}", sanpham.SanPhamID);
+                return Ok("thanh cong");
             }
-
-            if (sanpham.Soluong < tonkho.SoLuongTon)
+            catch(Exception ex)
             {
-                return BadRequest("Tổng số lượng sản phẩm không thể nhỏ hơn số lượng sản phẩm tồn kho");
-            }
+                logger.Error(ex, "Lỗi khi cập nhật thông tin tồn kho.");
 
-            if (sanpham.Soluong < 0)
-            {
-                return BadRequest("Số lượng không được nhỏ hơn 0");
-            }
-
-            if (sanpham.Gia < 0)
-            {
-                return BadRequest("Giá không được nhỏ hơn 0");
-            }
-
-            var update = db.SanPham.Find(sanpham.SanPhamID);
-            if (update == null)
-            {
-                return NotFound();
-            }
-
-            update.TenSanPham = sanpham.TenSanPham;
-            update.Soluong = sanpham.Soluong;
-            update.Gia = sanpham.Gia;
-            update.MoTa = sanpham.MoTa;
-            update.HangID = sanpham.HangID;
-            update.DanhMucID = sanpham.DanhMucID;
-
-            var result = db.SaveChanges();
-            if (result > 0)
-            {
-                logger.Info("Sửa sản phẩm thành công. ID: {0}", sanpham.SanPhamID);
-                return Ok(update);
-            }
-            else
-            {
-                logger.Info("Sửa thông tin thất bại");
-                return BadRequest("Sửa thông tin thất bại");
+                return InternalServerError(ex);
             }
            
+
         }
 
 
@@ -168,8 +173,10 @@ namespace BaiTap.Controllers
         [Route("them")]
         public async Task<IHttpActionResult> ThemSanPham(PhieuNhapKhoViewModel model)
         {
+
             try
             {
+                db.Configuration.ProxyCreationEnabled=false;
                 if (!ModelState.IsValid)
                 {
                     logger.Warn("ModelState không hợp lệ.");
@@ -177,6 +184,7 @@ namespace BaiTap.Controllers
                 }
 
                 var sanpham = model.SanPham;
+
                 if (sanpham.Gia == null)
                 {
                     return BadRequest("Giá sản phẩm không được để trống");
@@ -190,8 +198,27 @@ namespace BaiTap.Controllers
                     return BadRequest("Vui lòng chọn danh mục.");
                 }
 
-                db.SanPham.Add(model.SanPham);
-                await db.SaveChangesAsync(); // Lưu sản phẩm để lấy ID
+                // Khởi tạo ChiTietSanPham nếu nó null
+                if (model.ChiTietSanPham == null)
+                {
+                    model.ChiTietSanPham = new ChiTietSanPham();
+                }
+
+                // Lấy thông tin chi tiết sản phẩm từ trang web
+                ChiTietSanPham productDetails = await _productService.GetProductDetailsFromWebAsync(sanpham.TenSanPham);
+
+                if (productDetails != null)
+                {
+                    model.ChiTietSanPham.ManHinh = productDetails.ManHinh ?? model.ChiTietSanPham.ManHinh;
+                    model.ChiTietSanPham.HeDieuHanh = productDetails.HeDieuHanh ?? model.ChiTietSanPham.HeDieuHanh;
+                    model.ChiTietSanPham.CameraTruoc = productDetails.CameraTruoc ?? model.ChiTietSanPham.CameraTruoc;
+                    model.ChiTietSanPham.CameraSau = productDetails.CameraSau ?? model.ChiTietSanPham.CameraSau;
+                    model.ChiTietSanPham.Chip = productDetails.Chip ?? model.ChiTietSanPham.Chip;
+                    model.ChiTietSanPham.RAM = productDetails.RAM ?? model.ChiTietSanPham.RAM;
+                    model.ChiTietSanPham.BoNhoTrong = productDetails.BoNhoTrong ?? model.ChiTietSanPham.BoNhoTrong;
+                    model.ChiTietSanPham.Sim = productDetails.Sim ?? model.ChiTietSanPham.Sim;
+                    model.ChiTietSanPham.Pin = productDetails.Pin ?? model.ChiTietSanPham.Pin;
+                }
 
                 string url = await _productService.GetProductImageAsync(sanpham.TenSanPham);
                 if (!string.IsNullOrEmpty(url))
@@ -204,12 +231,14 @@ namespace BaiTap.Controllers
                 {
                     logger.Warn("Không thể lấy URL hình ảnh.");
                 }
+                db.SanPham.Add(sanpham);
+                await db.SaveChangesAsync(); // Lưu sản phẩm để lấy ID
 
-                model.ChiTietSanPham.SanPhamID = model.SanPham.SanPhamID;
+                model.ChiTietSanPham.SanPhamID = sanpham.SanPhamID;
                 db.ChiTietSanPham.Add(model.ChiTietSanPham);
                 await db.SaveChangesAsync(); // Lưu chi tiết sản phẩm
 
-                logger.Info("Thêm sản phẩm thành công. ID: {0}", model.SanPham.SanPhamID);
+                logger.Info("Thêm sản phẩm thành công. ID: {0}", sanpham.SanPhamID);
                 return Ok(model);
             }
             catch (Exception ex)
@@ -266,7 +295,7 @@ namespace BaiTap.Controllers
                 }
             }
         }
-       
+
 
     }
 }
