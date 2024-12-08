@@ -1,4 +1,5 @@
-﻿using BaiTap.Models;
+﻿
+using BaiTap.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -10,44 +11,57 @@ using System.Web.Mvc;
 
 namespace BaiTap.Controllers
 {
-    public class QuanLyKhachHangController : Controller
+    [RoutePrefix("api/quanlysanpham")]
+    public class QuanLySanPhamAPIController : ApiController
     {
+        private readonly ProductService _productService = new ProductService();
+        private static Logger logger = LogManager.GetCurrentClassLogger();
         private Model1 db = new Model1();
-        private static readonly HttpClient client = new HttpClient();
 
-        // GET: QuanLyKhachHang/DSKhachHang
-        public ActionResult Index()
+        // GET: api/quanlysanpham/sanpham
+        [HttpGet]
+        [Route("sanpham")]
+        public async Task<IHttpActionResult> SanPham()
         {
-            return View();
-        }
-
-        public async Task<ActionResult> DSKhachHang()
-        {
-            HttpResponseMessage response = await client.GetAsync("https://localhost:44383/api/quanlykhachhang/khachhang");
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var khachhang = await response.Content.ReadAsAsync<IEnumerable<KhachHang>>();
-                return View(khachhang);
+                // Tắt proxy động
+                db.Configuration.ProxyCreationEnabled = false;
+                // lay danh sach san pham tu csdl
+                var sanpham = db.SanPham.ToList();
+
+                logger.Info("Lấy danh sách sản phẩm thành công.");
+                return Ok(sanpham);
             }
-            return View("Error");
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Lỗi khi lấy danh sách sản phẩm.");
+                return InternalServerError(ex);
+            }
         }
 
-        // GET: QuanLyKhachHang/ChiTietKH/{id}
-        public async Task<ActionResult> ChiTietKH(int id)
+        // GET: api/quanlysanpham/sanpham/{id}
+        [HttpGet]
+        [Route("sanpham/{id}")]
+        public IHttpActionResult GetSanPham(int id)
         {
-            HttpResponseMessage response = await client.GetAsync($"https://localhost:44383/api/quanlykhachhang/chitiet/{id}");
-            if (response.IsSuccessStatusCode)
+            db.Configuration.ProxyCreationEnabled = false;
+            try
             {
-                var khachhang = await response.Content.ReadAsAsync<List<ChiTietKhachHang>>();
-                if (khachhang != null && khachhang.Count > 0)
+                var sp = db.SanPham.Find(id);
+                if (sp == null)
                 {
-                    return PartialView("ChiTietKH", khachhang);
+                    logger.Warn("Không tìm thấy sản phẩm với ID: {0}", id);
+                    return NotFound();
                 }
-                ViewBag.Thongbao = "Không tìm thấy chi tiết khách hàng.";
-                return View("Error");
+                logger.Info("Lấy thông tin sản phẩm thành công. ID: {0}", id);
+                return Ok(sp);
             }
-            ViewBag.Thongbao = "Lỗi khi gọi API.";
-            return View("Error");
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Lỗi khi lấy thông tin sản phẩm với ID: {0}", id);
+                return InternalServerError(ex);
+            }
         }
     }
 }

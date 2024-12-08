@@ -1,4 +1,4 @@
-﻿using BaiTap.Models;
+using BaiTap.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +25,6 @@ namespace BaiTap.ControllerAPI
         {
             try
             {
-                // Tắt proxy động
                 db.Configuration.ProxyCreationEnabled = false;
                 // lay danh sach khach hang tu csdl
                 var khachhang = db.KhachHang.ToList();
@@ -106,4 +105,3 @@ namespace BaiTap.ControllerAPI
         }
     }
 }
-
