@@ -104,8 +104,6 @@ namespace BaiTap.ControllerAPI
             }
         }
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 065d527203ba24d95b47a844c29c722e84ef321e
+
+
