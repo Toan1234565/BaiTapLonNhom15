@@ -1,109 +1,51 @@
-using BaiTap.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Web.Http;
-using System.Web.Http.Description;
-using NLog;
-using System.Data.Entity;
 using System.Threading.Tasks;
+using System.Web.Mvc;
+using BaiTap.Models;
 
-namespace BaiTap.ControllerAPI
+namespace BaiTap.Controllers
 {
-    [RoutePrefix("api/quanlykhachhang")]
-    public class QuanLyKhachHangAPIController : ApiController
+    public class QuanLyKhachHangController : Controller
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
-        private Model1 db = new Model1();
+        private static readonly HttpClient client = new HttpClient();
 
-        // GET: api/quanlykhachhang/khachhang
-        [HttpGet]
-        [Route("khachhang")]
-        public async Task<IHttpActionResult> KhachHang()
+        // GET: KhachHang
+        public async Task<ActionResult> Index()
         {
-            try
+            HttpResponseMessage response = await client.GetAsync("https://localhost:44383/api/quanlykhachhang/khachhang");
+            if (response.IsSuccessStatusCode)
             {
-                db.Configuration.ProxyCreationEnabled = false;
-                // lay danh sach khach hang tu csdl
-                var khachhang = db.KhachHang.ToList();
-                await db.SaveChangesAsync();
-                logger.Info("Lấy danh sách khách hàng thành công.");
-                return Ok(khachhang);
+                var khachhang = await response.Content.ReadAsAsync<IEnumerable<KhachHang>>();
+                return View(khachhang);
             }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Lỗi khi lấy danh sách khách hàng.");
-                return InternalServerError(ex);
-            }
+            return View("Error");
         }
 
-        // GET: api/quanlykhachhang/khachhang/{id}
-        [HttpGet]
-        [Route("khachhang/{id}")]
-        public IHttpActionResult GetKhachHang(int id)
+        // GET: KhachHang/ChiTiet/{id}
+        public async Task<ActionResult> ChiTiet(int id)
         {
-            try
+            HttpResponseMessage response = await client.GetAsync($"https://localhost:44383/api/quanlykhachhang/khachhang/{id}");
+            if (response.IsSuccessStatusCode)
             {
-                db.Configuration.ProxyCreationEnabled = false;
-                var kh = db.KhachHang.Find(id);
-                if (kh == null)
-                {
-                    logger.Warn("Không tìm thấy khach hang với ID: {0}", id);
-                    return NotFound();
-                }
-                logger.Info("Lấy thông tin khach hang thành công. ID: {0}", id);
-                return Ok(kh);
+                var khachhang = await response.Content.ReadAsAsync<KhachHang>();
+                return View(khachhang);
             }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Lỗi khi lấy thông tin khach hang với ID: {0}", id);
-                return InternalServerError(ex);
-            }
+            return View("Error");
         }
 
-        // GET: api/quanlykhachhang/dschitiet
-        [HttpGet]
-        [Route("dschitietkh")]
-        public IHttpActionResult GetDSChiTietKH()
+        // GET: KhachHang/DSChiTiet/{id}
+        public async Task<ActionResult> DSChiTiet(int id)
         {
-            try
+            HttpResponseMessage response = await client.GetAsync($"https://localhost:44383/api/quanlykhachhang/chitiet/{id}");
+            if (response.IsSuccessStatusCode)
             {
-                db.Configuration.ProxyCreationEnabled = false;
-                var ds = db.ChiTietKhachHang.ToList();
-                return Ok(ds);
+                var chiTietKhachHang = await response.Content.ReadAsAsync<IEnumerable<ChiTietKhachHang>>();
+                return View(chiTietKhachHang);
             }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Lỗi khi lấy danh sách chi tiết khách hàng.");
-                return InternalServerError(ex);
-            }
-        }
-
-        // GET: api/quanlykhachhang/chitiet/{id}
-        [HttpGet]
-        [Route("chitiet/{id}")]
-        public IHttpActionResult ChiTietKH(int id)
-        {
-            try
-            {
-                db.Configuration.ProxyCreationEnabled = false;
-                var chiTietKhachHang = db.ChiTietKhachHang.Where(c => c.KhachHangID == id).ToList();
-                if (chiTietKhachHang == null)
-                {
-                    logger.Warn("Không tìm thấy chi tiết khach hang với ID: {0}", id);
-                    return NotFound();
-                }
-                return Ok(chiTietKhachHang);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Lỗi khi lấy chi tiết khach hang với ID: {0}", id);
-                return InternalServerError(ex);
-            }
+            return View("Error");
         }
     }
 }
-
-
