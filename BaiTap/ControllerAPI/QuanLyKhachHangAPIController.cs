@@ -10,7 +10,7 @@ using NLog;
 using System.Data.Entity;
 using System.Threading.Tasks;
 
-namespace BaiTap.ControllerAPI
+namespace BaiTap.Controller
 {
     [RoutePrefix("api/quanlykhachhang")]
     public class QuanLyKhachHangAPIController : ApiController
