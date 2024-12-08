@@ -5,12 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using BaiTap.Models;
-
-<<<<<<< HEAD
 namespace BaiTap.Controllers
-=======
-namespace BaiTap.Controller
->>>>>>> 39ded215085fadbd02e003badb63f3cb359b3ed4
 {
     public class QuanLyKhachHangController : Controller
     {
