@@ -8,6 +8,7 @@ using System.Net.Mail;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Collections.Generic;
 
 namespace BaiTap.Controllers
 {
@@ -167,36 +168,31 @@ namespace BaiTap.Controllers
 
         [HttpGet]
         [Route("SOSANH")]
-        public async Task<IHttpActionResult> Sosanh(int id1, int id2)
+        public async Task<IHttpActionResult> Sosanh([FromUri] int[] id)
         {
             try
             {
-                var sp1 = await db.SanPham.FirstOrDefaultAsync(x => x.SanPhamID == id1);
-                var sp2 = await db.SanPham.FirstOrDefaultAsync(x => x.SanPhamID == id2);
-
-                if (sp1 == null || sp2 == null)
+                if( id == null || id.Length < 2)
                 {
-                    return Json(new { success = false, message = "One or both products not found." });
+                    return BadRequest("khong hop le");
+                }
+                var sanpham = db.ChiTietSanPham.Where(p => id.Contains(p.ChiTietSanPhamID)).ToList();
+                if(sanpham.Count != id.Length)
+                {
+                    return NotFound();
+                }
+                var sosanhsp = new List<Dictionary<string, string>>();
+                foreach( var kvp in sanpham)
+                {
+                    var SoSanh = new Dictionary<string, string>
+                    {
+                        {"ma hinh", kvp.ManHinh }
+                    };
+                    sosanhsp.Add(SoSanh);
                 }
 
-                var comparisonResult = new
-                {
-                    sanpham1 = new
-                    {
-                        sp1.TenSanPham,
-                        sp1.Gia,
-                        sp1.MoTa
-                    },
-                    sanpham2 = new
-                    {
-                        sp2.TenSanPham,
-                        sp2.Gia,
-                        sp2.MoTa
-                    }
-                };
-
                 logger.Info("Comparison successful");
-                return Ok(new { success = true, comparisonResult });
+                return Ok(sosanhsp);
             }
             catch (Exception ex)
             {

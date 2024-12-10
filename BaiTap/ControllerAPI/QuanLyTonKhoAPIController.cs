@@ -11,9 +11,11 @@ using NLog;
 using System.Data.Entity;
 using BaiTap.Services;
 using System.Net.Mail;
-
-
-
+using OfficeOpenXml;
+using System.Web;
+using System.Data.SqlTypes;
+using System.Data.Entity.Validation;
+using System.Data.Entity.Infrastructure;
 namespace BaiTap.Controllers
 {
     [RoutePrefix("api/quanlytonkho")]
@@ -48,6 +50,8 @@ namespace BaiTap.Controllers
                 return InternalServerError(ex);
             }
         }
+
+
         [HttpGet]
         [Route("phieunhapkho")]
         public IHttpActionResult PhieuNhapKho()
@@ -64,6 +68,194 @@ namespace BaiTap.Controllers
                 return InternalServerError(ex);
             }
         }
+
+        // POST: api/quanlytonkho/nhapfile
+        [HttpPost]
+        [Route("nhapfile")]
+        public async Task<IHttpActionResult> UploadFile()
+        {
+            db.Configuration.ProxyCreationEnabled = false;
+            var http = HttpContext.Current.Request;
+            if (http.Files.Count == 0)
+            {
+                return BadRequest("Không có file để upload");
+            }
+
+            var sanphamfile = http.Files[0];
+            if (sanphamfile == null || sanphamfile.ContentLength <= 0)
+            {
+                return BadRequest("Tệp không hợp lệ");
+            }
+
+            // Thiết lập LicenseContext cho EPPlus
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            try
+            {
+                var phieuNhap = new PhieuNhap
+                {
+                    NgayNhap = DateTime.Now,
+                    NhaCungCap = "nha cung cap a",
+                    Kho = "a"
+                };
+                using (var package = new ExcelPackage(sanphamfile.InputStream))
+                {
+                    var worksheet = package.Workbook.Worksheets.FirstOrDefault();
+                    if (worksheet == null)
+                    {
+                        return BadRequest("Không tìm thấy trang tính nào trong tệp Excel");
+                    }
+
+                    var rowCount = worksheet.Dimension.Rows;
+                    for (var row = 2; row <= rowCount; row++)
+                    {
+                        var masp = worksheet.Cells[row, 1].Value?.ToString();
+                        if (string.IsNullOrEmpty(masp))
+                        {
+                            return BadRequest($"Hàng {row}: Tên sản phẩm không được bỏ trống");
+                        }
+
+                        var danhmucId = int.TryParse(worksheet.Cells[row, 5].Value?.ToString(), out int danhmucid) ? danhmucid : (int?)null;
+                        try
+                        {
+
+
+                            if (danhmucId != null && !await db.DanhMuc.AnyAsync(dm => dm.DanhMucID == danhmucid))
+                            {
+                                var DM = await db.DanhMuc.FirstOrDefaultAsync(s => s.DanhMucID == danhmucid);
+                                if (DM == null)
+                                {
+                                    DM = new DanhMuc
+                                    {
+                                        DanhMucID = danhmucid,
+                                        TenDanhMuc = "Khach"
+                                    };
+                                    db.DanhMuc.Add(DM);
+                                    await db.SaveChangesAsync();
+                                }
+                            }
+                        }catch(Exception ex)
+                        {
+                            return BadRequest($"Loi khi them danh muc: {ex.Message}");
+                        }
+
+                        var IDhang = int.TryParse(worksheet.Cells[row, 6].Value?.ToString(), out int Hang) ? Hang : (int?)null;
+                        try
+                        {
+
+
+                            if (IDhang != null && !await db.Hang.AnyAsync(h => h.HangID == IDhang))
+                            {
+                                var hang = await db.Hang.FirstOrDefaultAsync(h => h.HangID == Hang);
+                                if (hang == null)
+                                {
+                                    hang = new Hang
+                                    {
+                                        HangID = Hang,
+                                        TenHang = "Khac"
+                                    };
+                                    db.Hang.Add(hang);
+                                    await db.SaveChangesAsync();
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            return BadRequest($" loi trong qua trinh them hang{ex.Message}");
+                        }
+                        var sanpham = await db.SanPham.FirstOrDefaultAsync(sp => sp.TenSanPham == masp);
+                        if (sanpham != null)
+                        {
+                            var addfile = int.TryParse(worksheet.Cells[row, 2].Value?.ToString(), out int soluong) ? soluong : 0;
+                            sanpham.Soluong += addfile;
+
+                            var tonkho = await db.TonKho.FirstOrDefaultAsync(tk => tk.SanPhamID == sanpham.SanPhamID);
+                            if (tonkho != null)
+                            {
+                                tonkho.SoLuongTon += addfile;
+                            }
+                            else
+                            {
+                                db.TonKho.Add(new TonKho
+                                {
+                                    SanPhamID = sanpham.SanPhamID,
+                                    SoLuongTon = addfile
+                                });
+                            }
+                            // thực hiện them chi tiết phiếu nhâp 
+                            var chitiet = new ChiTietPhieuNhap
+                            {
+                                PhieuNhapID = phieuNhap.PhieuNhapID,
+                                SanPhamID = sanpham.SanPhamID,
+                                SoLuong = sanpham.Soluong,
+                                DonGia = sanpham.Soluong
+                            };
+
+                        }
+                        else
+                        {
+                            var newsanpham = new SanPham
+                            {
+                                TenSanPham = masp,
+                                Soluong = int.TryParse(worksheet.Cells[row, 2].Value?.ToString(), out int soluong) ? soluong : (int?)null,
+                                MoTa = worksheet.Cells[row, 3].Value?.ToString(),
+                                Gia = double.TryParse(worksheet.Cells[row, 4].Value?.ToString(), out double gia) ? gia : (double?)null,
+                                DanhMucID = danhmucid,
+                                HangID = IDhang,
+                                HinhAnh = worksheet.Cells[row, 7].Value?.ToString()
+                            };
+                            db.SanPham.Add(newsanpham);
+                            await db.SaveChangesAsync();
+                            db.TonKho.Add(new TonKho
+                            {
+                                SanPhamID = newsanpham.SanPhamID,
+                                SoLuongTon = newsanpham.Soluong ?? 0
+                            });
+                            var chitiet = new ChiTietPhieuNhap
+                            {
+                                PhieuNhapID = phieuNhap.PhieuNhapID,
+                                SanPhamID = sanpham.SanPhamID,
+                                SoLuong = sanpham.Soluong,
+                                DonGia = sanpham.Soluong
+                            };
+                        }
+                    }
+                }
+
+                await db.SaveChangesAsync();
+                return Ok("Thành công");
+            }
+            catch (FormatException ex)
+            {
+                return BadRequest($"Định dạng tệp không hợp lệ: {ex.Message}");
+            }
+            catch (DbEntityValidationException ex)
+            {
+                var errors = new List<string>();
+                foreach (var validationErrors in ex.EntityValidationErrors)
+                {
+                    foreach (var validationError in validationErrors.ValidationErrors)
+                    {
+                        errors.Add($"Property: {validationError.PropertyName}, Error: {validationError.ErrorMessage}");
+                    }
+                }
+                var errorMessage = string.Join("; ", errors);
+                return BadRequest($"Validation failed for one or more entities. Details: {errorMessage}");
+            }
+            catch (DbUpdateException ex)
+            {
+                var errorMessage = ex.InnerException?.Message ?? ex.Message;
+                return BadRequest($"An error occurred while updating the entries: {errorMessage}");
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+
+
+
 
 
         [HttpGet]
@@ -374,7 +566,7 @@ namespace BaiTap.Controllers
                 update.SoLuongTon = ton.SoLuongTon;
                 db.SaveChanges();
                 return Ok("Cập nhật thông tin tồn kho thành công.");
-                
+
             }
             catch (Exception ex)
             {

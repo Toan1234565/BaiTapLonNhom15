@@ -1,0 +1,22 @@
+﻿@{
+    ViewBag.Title = "Upload File";
+}
+
+<h2>Upload File</h2>
+
+
+    @using (Html.BeginForm("UploadFile", "QuanLyTonKho", FormMethod.Post, n new { @class = "form-horizontal", role = "form", id = "ThemSanPhamForm" }))
+    {
+        <div class="form-group">
+            <label for="file">Chọn tệp:</label>
+            <input type="file" name="file" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Upload</button>
+    }
+
+    @if (ViewBag.Thongbao != null)
+    {
+        <div class="alert alert-info">
+            @ViewBag.Thongbao
+        </div>
+    }

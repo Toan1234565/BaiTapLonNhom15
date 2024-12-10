@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using BaiTap.Models;
 using BaiTap.Services;
@@ -75,6 +76,44 @@ namespace BaiTap.Controllers
                 ViewBag.Thongbao = $"Có lỗi khi lấy API: {ex.Message}";
                 return View("Error");
             }
+        }
+        public async Task<ActionResult> UploadFile(HttpPostedFileBase file) {
+            if( file == null || file.ContentLength <= 0)
+            {
+                ViewBag.Thongbao = "tep ko hop le";
+                return RedirectToAction("PhieuNhapKho");
+            }
+            try
+            {
+                using (var content = new MultipartFormDataContent())
+                {
+                    var filecontennt = new MultipartFormDataContent();
+                    filecontennt.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("from-data")
+                    {
+                        Name = "file",
+                        FileName = file.FileName
+                    };
+                    filecontennt.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                   
+
+                    content.Add(filecontennt);
+                    HttpResponseMessage kq = await client.GetAsync($"{apiUrl}/nhapfile");
+
+                    if (kq.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("PhieuNhapKho");
+                    }
+                    ViewBag.Thongbao = "Có lỗi xảy ra";
+                    return View("Error");
+                }
+                
+            }
+            catch(Exception ex)
+            {
+                ViewBag.Thongbao = $"Có lỗi khi lấy API: {ex.Message}";
+                return View("Error");
+            }
+             
         }
 
         public async Task<ActionResult> PhieuXuatKho()

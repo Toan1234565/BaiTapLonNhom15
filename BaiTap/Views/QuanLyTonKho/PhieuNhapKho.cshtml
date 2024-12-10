@@ -7,6 +7,12 @@
 <h2>
     danh sách phiếu nhập hàng
 </h2>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+</head>
 <main id="main" class="main" style="width:100%">
 
     <div class="pagetitle">
@@ -58,7 +64,7 @@
                                 @Html.DisplayFor(modelItem => item.SanPhamID)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem =>item.SanPham.TenSanPham)
+                                @Html.DisplayFor(modelItem => item.SanPham.TenSanPham)
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.SoLuong)
@@ -84,4 +90,68 @@
             </div>
         </div>
     </section>
+
+    <div class="form-actions no-color">
+        <button type="button" class="btn btn-primary Themmoi" data-toggle="modal">
+            Nhập kho
+        </button>
+        <div class="modal fade" id="ThemMoi" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ThemTonKho">Thông tin phiếu nhập kho</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        @using (Html.BeginForm("UploadFile", "QuanLyTonKho", FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "ThemSanPhamForm" }))
+                        {
+                            <div class="form-group">
+                                <label for="file">Chọn tệp:</label>
+                                <input type="file" name="file" class="form-control" />
+                            </div>
+                            <button type="submit" class="btn btn-primary">Upload</button>
+                        }
+
+                        @if (ViewBag.Thongbao != null)
+                        {
+                            <div class="alert alert-info">
+                                @ViewBag.Thongbao
+                            </div>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                        <button type="button" class="btn btn-primary" id="Luu">Lưu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
+
+    
+
+    <script>
+        $(document).ready(function () {
+            // Mở modal và tải nội dung thông qua AJAX
+            $('.Themmoi').click(function () {
+                $.ajax({
+                    url: '@Url.Action("UploadFile", "QuanLySanPham")', // URL action method của bạn
+                    method: 'GET',
+                    success: function (data) {
+                        $('#ThemMoi').find('.modal-body').html(data);
+                        $('#ThemMoi').modal('show');
+                    }
+                });
+            });
+
+            // Lưu nội dung khi nhấn nút lưu
+            $('#ThemMoi').on('click', '#Luu', function () {
+                $('#ThemSanPhamForm').submit();
+            });
+        });
+    </script>
+
