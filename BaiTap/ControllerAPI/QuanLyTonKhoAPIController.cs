@@ -70,12 +70,15 @@ namespace BaiTap.Controllers
         }
 
         // POST: api/quanlytonkho/nhapfile
+        // thực hiện nhập kho bằng file dữ liệu 
         [HttpPost]
         [Route("nhapfile")]
         public async Task<IHttpActionResult> UploadFile()
         {
+            // tắt proxy 
             db.Configuration.ProxyCreationEnabled = false;
             var http = HttpContext.Current.Request;
+            // kiểm tra file vào 
             if (http.Files.Count == 0)
             {
                 return BadRequest("Không có file để upload");
@@ -92,6 +95,7 @@ namespace BaiTap.Controllers
 
             try
             {
+                // tạo phiếu nhập
                 var phieuNhap = new PhieuNhap
                 {
                     NgayNhap = DateTime.Now,
@@ -115,6 +119,7 @@ namespace BaiTap.Controllers
                             return BadRequest($"Hàng {row}: Tên sản phẩm không được bỏ trống");
                         }
 
+                        // kiểm tra danh mục trong file nếu trong TH ko có thì tao mới còn có thì them tự động 
                         var danhmucId = int.TryParse(worksheet.Cells[row, 5].Value?.ToString(), out int danhmucid) ? danhmucid : (int?)null;
                         try
                         {
@@ -138,7 +143,7 @@ namespace BaiTap.Controllers
                         {
                             return BadRequest($"Loi khi them danh muc: {ex.Message}");
                         }
-
+                        // Giống Danh  muc ở trên 
                         var IDhang = int.TryParse(worksheet.Cells[row, 6].Value?.ToString(), out int Hang) ? Hang : (int?)null;
                         try
                         {
@@ -163,6 +168,7 @@ namespace BaiTap.Controllers
                         {
                             return BadRequest($" loi trong qua trinh them hang{ex.Message}");
                         }
+                        // checkb Tên sản phâm đê thực hiện thêm số lượng vào bảng SAN_PHAM và TONkho 
                         var sanpham = await db.SanPham.FirstOrDefaultAsync(sp => sp.TenSanPham == masp);
                         if (sanpham != null)
                         {
@@ -182,6 +188,7 @@ namespace BaiTap.Controllers
                                     SoLuongTon = addfile
                                 });
                             }
+                            
                             // thực hiện them chi tiết phiếu nhâp 
                             var chitiet = new ChiTietPhieuNhap
                             {
@@ -194,6 +201,7 @@ namespace BaiTap.Controllers
                         }
                         else
                         {
+                            // them thông tin vào trong bang SanPham
                             var newsanpham = new SanPham
                             {
                                 TenSanPham = masp,
@@ -209,7 +217,8 @@ namespace BaiTap.Controllers
                             db.TonKho.Add(new TonKho
                             {
                                 SanPhamID = newsanpham.SanPhamID,
-                                SoLuongTon = newsanpham.Soluong ?? 0
+                                SoLuongTon = newsanpham.Soluong ?? 0,
+                                NgayCapNhat = DateTime.Now
                             });
                             var chitiet = new ChiTietPhieuNhap
                             {

@@ -92,10 +92,10 @@
     </section>
 
     <div class="form-actions no-color">
-        <button type="button" class="btn btn-primary Themmoi" data-toggle="modal">
+        <button type="button" class="btn btn-primary Themmoi" data-toggle="modal" data-target="#ThemMoi">
             Nhập kho
         </button>
-        <div class="modal fade" id="ThemMoi" tabindex="-1" role="dialog">
+        <div class="modal fade" id="ThemMoi" tabindex="-1" role="dialog" aria-labelledby="ThemTonKho" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -105,26 +105,17 @@
                         </button>
                     </div>
                     <div class="modal-body">
-
-                        @using (Html.BeginForm("UploadFile", "QuanLyTonKho", FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "ThemSanPhamForm" }))
-                        {
+                        <form id="uploadForm" enctype="multipart/form-data">
                             <div class="form-group">
-                                <label for="file">Chọn tệp:</label>
-                                <input type="file" name="file" class="form-control" />
+                                <label for="fileInput">Chọn tệp để tải lên:</label>
+                                <input type="file" id="fileInput" name="file" class="form-control">
                             </div>
-                            <button type="submit" class="btn btn-primary">Upload</button>
-                        }
-
-                        @if (ViewBag.Thongbao != null)
-                        {
-                            <div class="alert alert-info">
-                                @ViewBag.Thongbao
-                            </div>
-                        }
+                            <button type="submit" class="btn btn-primary">Nhập kho</button>
+                        </form>
+                        <div id="result" class="mt-3"></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                        <button type="button" class="btn btn-primary" id="Luu">Lưu</button>
                     </div>
                 </div>
             </div>
@@ -132,26 +123,44 @@
     </div>
 </main>
 
-    
 
-    <script>
-        $(document).ready(function () {
-            // Mở modal và tải nội dung thông qua AJAX
-            $('.Themmoi').click(function () {
-                $.ajax({
-                    url: '@Url.Action("UploadFile", "QuanLySanPham")', // URL action method của bạn
-                    method: 'GET',
-                    success: function (data) {
-                        $('#ThemMoi').find('.modal-body').html(data);
-                        $('#ThemMoi').modal('show');
-                    }
-                });
-            });
 
-            // Lưu nội dung khi nhấn nút lưu
-            $('#ThemMoi').on('click', '#Luu', function () {
-                $('#ThemSanPhamForm').submit();
-            });
+<script>
+    $(document).ready(function () {
+        // Mở modal và tải nội dung thông qua AJAX
+        $('.Themmoi').click(function () {
+            $('#ThemMoi').modal('show');
         });
-    </script>
 
+        // Lưu nội dung khi nhấn nút lưu
+        $('#ThemMoi').on('click', '#Luu', function () {
+            $('#uploadForm').submit();
+        });
+    });
+
+    document.getElementById('uploadForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var formData = new FormData();
+        var fileInput = document.getElementById('fileInput');
+        if (fileInput.files.length === 0) {
+            alert('Vui lòng chọn một tệp để tải lên.');
+            return;
+        }
+
+        formData.append('file', fileInput.files[0]);
+
+        fetch('/api/quanlytonkho/nhapfile', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerText = data.message;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('result').innerText = 'Đã xảy ra lỗi trong quá trình tải lên tệp.';
+            });
+    });
+</script>
