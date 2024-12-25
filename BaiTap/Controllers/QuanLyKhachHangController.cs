@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -13,42 +11,43 @@ namespace BaiTap.Controllers
     public class QuanLyKhachHangController : Controller
     {
         private Model1 db = new Model1();
-        private static readonly HttpClient client = new HttpClient();
-        // GET: QuanLyKhachHang/DSKhachHang
+        // GET: QuanLyKhachHang
         public ActionResult Index()
         {
             return View();
         }
-        public async Task<ActionResult> DSKhachHang()
+        public ActionResult DSKhachHang()
         {
-            HttpResponseMessage response = await client.GetAsync("https://localhost:44383/api/quanlykhachhang/khachhang");
-            if (response.IsSuccessStatusCode)
-            {
-
-                var khachhang = await response.Content.ReadAsAsync<IEnumerable<KhachHang>>();
-                return View(khachhang);
-            }
-            return View("Error");
+            List<KhachHang> ds = db.KhachHang.ToList();
+            return View(ds);
         }
-
-
-        // GET: QuanLySanPham/ChiTiet/{id}
-        public async Task<ActionResult> ChiTietKH(int id)
+        public ActionResult ChiTietKH(int id)
         {
-            HttpResponseMessage response = await client.GetAsync($"https://localhost:44383/api/quanlykhachhang/chitiet/{id}");
-            if (response.IsSuccessStatusCode)
+            var khachhang = db.KhachHang.Include("DonHang").Include("TaiKhoanKH").FirstOrDefault(kh => kh.KhachHangID == id);
+            if (khachhang == null)
             {
-                var khachhang = await response.Content.ReadAsAsync<List<ChiTietKhachHang>>();
-                if (khachhang != null & khachhang.Count > 0)
-                {
-                    return PartialView("ChiTietKH", khachhang);
-                }
-                ViewBag.Thongbao = "khong tim thay";
-                return View("Error");
+                return HttpNotFound();
             }
-            ViewBag.Thongbao = "loi khi gọi API.";
-            return View("Error");
+            return View(khachhang);
+        }
+        public ActionResult SuaKhachHang(int id, TonKho ton)
+        {
+            var updata = db.TonKho.Find(id);
+            if (updata == null)
+            {
+                return HttpNotFound();
+            }
+            updata.SoLuongTon = ton.SoLuongTon;
+            var s = db.SaveChanges();
+            if (s > 0)
+            {
+                return View("SanPhamTonKho");
+            }
+            else
+            {
+                ModelState.AddModelError("", "Thay đổi thông tin thất bại!");
+                return View(ton);
+            }
         }
     }
-
 }

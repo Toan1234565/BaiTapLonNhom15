@@ -1,67 +1,129 @@
 ﻿using BaiTap.Models;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace BaiTap.Controllers
 {
     public class TaiKhoanKhachHangController : Controller
     {
-        private Model1 db = new Model1();
+        private readonly Model1 db = new Model1();
 
-        // GET: QuanLyTaiKhoan
+        // GET: TaiKhoanKhachHang
         public ActionResult Index()
         {
-            var taiKhoanKHs = db.TaiKhoanKH.Include("KhachHang").ToList();
-            if (taiKhoanKHs == null || !taiKhoanKHs.Any())
-            {
-                // Trả về thông báo nếu không có dữ liệu
-                ViewBag.Message = "Không có dữ liệu tài khoản khách hàng.";
-            }
-            return View(taiKhoanKHs);
+            return View();
         }
 
-
-
-        // GET: QuanLyTaiKhoan/Details/5
-        public ActionResult ChiTiet(int id)
+        public ActionResult DSTaiKhoan()
         {
-            TaiKhoanKH taiKhoanKH = db.TaiKhoanKH.Find(id);
-            if (taiKhoanKH == null)
+            List<TaiKhoanKH> ds = db.TaiKhoanKH.ToList();
+            return View(ds);
+        }
+
+        public ActionResult SuaTaiKhoan(int id)
+        {
+            TaiKhoanKH tk = db.TaiKhoanKH.Find(id);
+            if (tk == null)
             {
                 return HttpNotFound();
             }
-
-            var donHangs = db.DonHang.Where(dh => dh.KhachHangID == taiKhoanKH.KhachHangID).ToList();
-            ViewBag.DonHangs = donHangs;
-
-            return View(taiKhoanKH);
+            return View(tk);
         }
 
-        // GET: QuanLyTaiKhoan/Delete/5
-        public ActionResult Delete(int id)
-        {
-            TaiKhoanKH taiKhoanKH = db.TaiKhoanKH.Find(id);
-            if (taiKhoanKH == null)
-            {
-                return HttpNotFound();
-            }
-            return View(taiKhoanKH);
-        }
-
-        // POST: QuanLyTaiKhoan/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult SuaTaiKhoan(TaiKhoanKH tk)
         {
-            TaiKhoanKH taiKhoanKH = db.TaiKhoanKH.Find(id);
-            if (taiKhoanKH == null)
+            if (!ModelState.IsValid)
+            {
+                return View(tk);
+            }
+
+            var update = db.TaiKhoanKH.Find(tk.TaiKhoanID);
+            if (update == null)
             {
                 return HttpNotFound();
             }
 
-            db.TaiKhoanKH.Remove(taiKhoanKH);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            update.TenDangNhap = tk.TenDangNhap;
+            update.MatKhau = tk.MatKhau;
+            update.TrangThai = tk.TrangThai;
+
+            try
+            {
+                db.SaveChanges();
+                return RedirectToAction("DSTaiKhoan");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Thay đổi thông tin tài khoản thất bại: " + ex.Message);
+                return View(tk);
+            }
+        }
+
+        public ActionResult XoaTaiKhoan(int id)
+        {
+            TaiKhoanKH tk = db.TaiKhoanKH.Find(id);
+            if (tk == null)
+            {
+                return HttpNotFound();
+            }
+            return View(tk);
+        }
+
+        [HttpPost, ActionName("XoaTaiKhoan")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> XoaTaiKhoanConfirmed(int id)
+        {
+            TaiKhoanKH tk = await db.TaiKhoanKH.FindAsync(id);
+            if (tk == null)
+            {
+                return HttpNotFound();
+            }
+
+            db.TaiKhoanKH.Remove(tk);
+            await db.SaveChangesAsync();
+            return RedirectToAction("DSTaiKhoan");
+        }
+
+        public ActionResult TaoTaiKhoan()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult TaoTaiKhoan(TaiKhoanKH tk)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(tk);
+            }
+
+            db.TaiKhoanKH.Add(tk);
+            try
+            {
+                db.SaveChanges();
+                return RedirectToAction("DSTaiKhoan");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Tạo tài khoản thất bại: " + ex.Message);
+                return View(tk);
+            }
+        }
+
+        public ActionResult ChiTietTaiKhoan(int id)
+        {
+            TaiKhoanKH tk = db.TaiKhoanKH.Find(id);
+            if (tk == null)
+            {
+                return HttpNotFound();
+            }
+            return View(tk);
         }
     }
 }

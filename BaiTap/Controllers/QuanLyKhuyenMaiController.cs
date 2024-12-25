@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-
+using Microsoft.AspNetCore;
 namespace BaiTap.Controllers
 {
     public class QuanLyKhuyenMaiController : Controller
     {
-        private readonly Model1 db = new Model1();
+        private Model1 db = new Model1();
+
 
         // GET: QuanLyKhuyenMai
         public ActionResult Index()
@@ -22,45 +23,48 @@ namespace BaiTap.Controllers
             List<KhuyenMai> ds = db.KhuyenMai.ToList();
             return View(ds);
         }
-
         public ActionResult SuaKM(int id)
         {
-            KhuyenMai km = db.KhuyenMai.Find(id);
-            if (km == null)
+            var khuyenMai = db.KhuyenMai.Find(id);
+            if (khuyenMai == null)
             {
                 return HttpNotFound();
             }
-            return View(km);
+            return View(khuyenMai);
         }
 
+        // POST: SuaKM
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult SuaKM(KhuyenMai km)
+        public ActionResult SuaKM(KhuyenMai model)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(km);
-            }
+                var khuyenMai = db.KhuyenMai.Find(model.KhuyenMaiID);
+                if (khuyenMai != null)
+                {
+                    // Cập nhật các thuộc tính
+                    khuyenMai.TenKhuyenMai = model.TenKhuyenMai;
+                    khuyenMai.Mota = model.Mota;
+                    khuyenMai.NgayBD = model.NgayBD;
+                    khuyenMai.NgayKT = model.NgayKT;
+                    khuyenMai.LoaiKM = model.LoaiKM;
+                    khuyenMai.DieuKien = model.DieuKien;
+                    khuyenMai.GiaTri = model.GiaTri;
+                    khuyenMai.Soluong = model.Soluong;
+                    khuyenMai.DiemTichLuyToiThieu = model.DiemTichLuyToiThieu;
+                    khuyenMai.GiaTriDonHangToiThieu = model.GiaTriDonHangToiThieu;
 
-            var update = db.KhuyenMai.Find(km.KhuyenMaiID);
-            if (update == null)
-            {
-                return HttpNotFound();
+                    db.SaveChanges(); // Lưu thay đổi
+                    return RedirectToAction("DSKhuyenMai"); // Chuyển hướng đến danh sách khuyến mãi
+                }
+                else
+                {
+                    // Nếu không tìm thấy khuyến mãi trong cơ sở dữ liệu
+                    ModelState.AddModelError("", "Khuyến mãi không tồn tại.");
+                }
             }
-
-            update.TenKhuyenMai = km.TenKhuyenMai;
-            update.NgayBD = km.NgayBD;
-
-            try
-            {
-                db.SaveChanges();
-                return RedirectToAction("DSKhuyenMai");
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Thay đổi thông tin khuyến mãi thất bại: " + ex.Message);
-                return View(km);
-            }
+            return View(model); // Trả về view với mô hình đã nhập
         }
 
         public ActionResult XoaKhuyenMai(int id)
@@ -75,47 +79,36 @@ namespace BaiTap.Controllers
 
         [HttpPost, ActionName("XoaKhuyenMai")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> XoaKhuyenMaiConfirmed(int id)
+        public async Task<ActionResult> XoaKhuyenMai1(int id)
         {
-            KhuyenMai km = await db.KhuyenMai.FindAsync(id);
-            if (km == null)
-            {
-                return HttpNotFound();
-            }
-
+            KhuyenMai km = db.KhuyenMai.Find(id);
             db.KhuyenMai.Remove(km);
             await db.SaveChangesAsync();
             return RedirectToAction("DSKhuyenMai");
         }
 
-        public ActionResult TaoKhuyenMai()
-        {
-            return View();
-        }
-
+        // POST: ThemKhuyenMai
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult TaoKhuyenMai(KhuyenMai km)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(km);
+                db.KhuyenMai.Add(km);
+                var id = db.SaveChanges();
+                if (id > 0)
+                {
+                    return RedirectToAction("DSKhuyenMai");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Tạo khuyến mãi thất bại");
+                    return View(km);
+                }
             }
-
-            db.KhuyenMai.Add(km);
-            try
-            {
-                db.SaveChanges();
-                return RedirectToAction("DSKhuyenMai");
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Tạo khuyến mãi thất bại: " + ex.Message);
-                return View(km);
-            }
+            return View(km);
         }
-
-        public ActionResult ApDungKhuyenMai(int? IDSP, int? KMID, double? GiaTriDH, int? Diem, int? diemdoi)
+        public ActionResult TaoKhuyenMai(int? IDSP, int? KMID, double? GiaTriDH, int? Diem, int? diemdoi)
         {
             if (IDSP.HasValue && KMID.HasValue && GiaTriDH.HasValue && Diem.HasValue && diemdoi.HasValue)
             {
@@ -156,7 +149,7 @@ namespace BaiTap.Controllers
                         khuyenmai.Soluong--;
                         if (khuyenmai.Soluong == 0)
                         {
-                            // Handle out of stock promotion here, if needed
+                            KMHetHan.KhuyenMais.Add(khuyenmai);
                         }
                         db.SaveChanges();
                         return Json(new { success = true, giaMoi = sanpham.Gia }, JsonRequestBehavior.AllowGet);
@@ -167,9 +160,22 @@ namespace BaiTap.Controllers
             return View();
         }
 
-        public ActionResult ChiTietKM()
+        public ActionResult Graph()
         {
-            return View();
+            // Lấy dữ liệu từ cơ sở dữ liệu
+            var khuyenMais = db.KhuyenMai.ToList();
+
+            // Chuẩn bị dữ liệu cho biểu đồ (dùng lớp đã định nghĩa)
+            var data = khuyenMais.Select(km => new KhuyenMaiChartData
+            {
+                TenKhuyenMai = km.TenKhuyenMai,
+                Soluong = km.Soluong
+            }).ToList();
+
+            // Trả dữ liệu về view
+            return View(data);
         }
+
     }
 }
+

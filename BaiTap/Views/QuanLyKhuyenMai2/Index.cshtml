@@ -1,0 +1,191 @@
+﻿@{
+    ViewBag.Title = "Quản Lý Khuyến Mãi";
+}
+
+<h2 class="text-center">Quản Lý Khuyến Mãi</h2>
+
+<div class="container">
+    <div class="text-center mb-3">
+        <a href="javascript:void(0);" class="btn btn-primary" id="createBtn">Thêm Khuyến Mãi</a>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Tiêu Đề</th>
+                <th>Ngày Bắt Đầu</th>
+                <th>Ngày Kết Thúc</th>
+                <th>Hành Động</th>
+            </tr>
+        </thead>
+        <tbody id="khuyenMaiList">
+            <!-- Dữ liệu khuyến mãi sẽ được nạp qua AJAX -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal for Create/Edit -->
+<div class="modal" id="khuyenMaiModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modalTitle">Thêm Khuyến Mãi</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="khuyenMaiForm">
+                    <input type="hidden" id="KhuyenMaiID" />
+                    <div class="form-group">
+                        <label for="TenKhuyenMai">Tên Khuyến Mãi</label>
+                        <input type="text" class="form-control" id="TenKhuyenMai" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NgayBD">Ngày Bắt Đầu</label>
+                        <input type="date" class="form-control" id="NgayBD" />
+                    </div>
+                    <div class="form-group">
+                        <label for="NgayKT">Ngày Kết Thúc</label>
+                        <input type="date" class="form-control" id="NgayKT" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Mota">Mô Tả</label>
+                        <textarea class="form-control" id="Mota"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="LoaiKM">Loại Khuyến Mãi</label>
+                        <input type="text" class="form-control" id="LoaiKM" />
+                    </div>
+                    <div class="form-group">
+                        <label for="GiaTri">Giá Trị</label>
+                        <input type="number" class="form-control" id="GiaTri" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Soluong">Số Lượng</label>
+                        <input type="number" class="form-control" id="Soluong" />
+                    </div>
+                    <div class="form-group">
+                        <label for="GiaTriDonHangToiThieu">Giá Trị Đơn Hàng Tối Thiểu</label>
+                        <input type="number" class="form-control" id="GiaTriDonHangToiThieu" />
+                    </div>
+                    <div class="form-group">
+                        <label for="DiemTichLuyToiThieu">Điểm Tích Lũy Tối Thiểu</label>
+                        <input type="number" class="form-control" id="DiemTichLuyToiThieu" />
+                    </div>
+                    <button type="submit" class="btn btn-success">Lưu</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Lấy danh sách khuyến mãi
+            function loadKhuyenMai() {
+                $.get("/QuanLyKhuyenMai2/GetAllKhuyenMai", function (data) {
+                    var rows = '';
+                    $.each(data, function (index, khuyenMai) {
+                        rows += `<tr>
+                                        <td>${khuyenMai.TenKhuyenMai}</td>
+                                        <td>${khuyenMai.NgayBD}</td>
+                                        <td>${khuyenMai.NgayKT}</td>
+                                        <td>
+                                            <button class="btn btn-warning editBtn" data-id="${khuyenMai.KhuyenMaiID}">Sửa</button>
+                                            <button class="btn btn-danger deleteBtn" data-id="${khuyenMai.KhuyenMaiID}">Xóa</button>
+                                        </td>
+                                      </tr>`;
+                    });
+                    $("#khuyenMaiList").html(rows);
+                });
+            }
+
+            // Lấy danh sách khi tải trang
+            loadKhuyenMai();
+
+            // Sự kiện mở form tạo mới
+            $("#createBtn").click(function () {
+                $("#khuyenMaiModal").modal('show');
+                $("#modalTitle").text('Thêm Khuyến Mãi');
+                $("#khuyenMaiForm")[0].reset();
+                $("#KhuyenMaiID").val('');
+            });
+
+            // Xử lý form tạo mới hoặc sửa
+            $("#khuyenMaiForm").submit(function (e) {
+                e.preventDefault();
+
+                var formData = {
+                    KhuyenMaiID: $("#KhuyenMaiID").val(),
+                    TenKhuyenMai: $("#TenKhuyenMai").val(),
+                    NgayBD: $("#NgayBD").val(),
+                    NgayKT: $("#NgayKT").val(),
+                    Mota: $("#Mota").val(),
+                    LoaiKM: $("#LoaiKM").val(),
+                    GiaTri: $("#GiaTri").val(),
+                    Soluong: $("#Soluong").val(),
+                    GiaTriDonHangToiThieu: $("#GiaTriDonHangToiThieu").val(),
+                    DiemTichLuyToiThieu: $("#DiemTichLuyToiThieu").val()
+                };
+
+                var url = '/QuanLyKhuyenMai2/CreateKhuyenMai';
+                var method = 'POST';
+
+                if ($("#KhuyenMaiID").val()) {
+                    url = '/QuanLyKhuyenMai2/SuaKM';
+                    method = 'PUT';
+                }
+
+                $.ajax({
+                    url: url,
+                    method: method,
+                    data: JSON.stringify(formData),
+                    contentType: 'application/json',
+                    success: function (response) {
+                        alert(response.message);
+                        loadKhuyenMai();
+                        $("#khuyenMaiModal").modal('hide');
+                    }
+                });
+            });
+
+            // Sửa khuyến mãi
+            $(document).on('click', '.editBtn', function () {
+                var id = $(this).data('id');
+                $.get(`/QuanLyKhuyenMai2/GetKhuyenMaiById/${id}`, function (data) {
+                    if (data.success) {
+                        var km = data;
+                        $("#KhuyenMaiID").val(km.KhuyenMaiID);
+                        $("#TenKhuyenMai").val(km.TenKhuyenMai);
+                        $("#NgayBD").val(km.NgayBD);
+                        $("#NgayKT").val(km.NgayKT);
+                        $("#Mota").val(km.Mota);
+                        $("#LoaiKM").val(km.LoaiKM);
+                        $("#GiaTri").val(km.GiaTri);
+                        $("#Soluong").val(km.Soluong);
+                        $("#GiaTriDonHangToiThieu").val(km.GiaTriDonHangToiThieu);
+                        $("#DiemTichLuyToiThieu").val(km.DiemTichLuyToiThieu);
+                        $("#modalTitle").text('Sửa Khuyến Mãi');
+                        $("#khuyenMaiModal").modal('show');
+                    } else {
+                        alert(data.message);
+                    }
+                });
+            });
+
+            // Xóa khuyến mãi
+            $(document).on('click', '.deleteBtn', function () {
+                var id = $(this).data('id');
+                if (confirm('Bạn có chắc muốn xóa?')) {
+                    $.ajax({
+                        url: `/QuanLyKhuyenMai2/XoaKhuyenMai?id=${id}`,
+                        method: 'DELETE',
+                        success: function (response) {
+                            alert(response.message);
+                            loadKhuyenMai();
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

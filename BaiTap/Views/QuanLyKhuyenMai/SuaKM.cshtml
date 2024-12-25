@@ -1,5 +1,4 @@
 ﻿@model BaiTap.Models.KhuyenMai
-
 @{
     ViewBag.Title = "Sửa Khuyến Mãi";
 }
@@ -97,6 +96,7 @@
                 <div class="form-group">
                     <div class="col-md-offset-4 col-md-8">
                         <input type="submit" value="Lưu thay đổi" class="btn btn-primary" />
+                        @Html.ActionLink("Hủy", "DSKhuyenMai", "QuanLyKhuyenMai", null, new { @class = "btn btn-default" })
                     </div>
                 </div>
             }

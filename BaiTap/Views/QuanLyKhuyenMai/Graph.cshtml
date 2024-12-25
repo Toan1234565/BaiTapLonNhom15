@@ -1,0 +1,64 @@
+﻿@{
+    ViewBag.Title = "Graph";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-center">Graph</h2>
+
+<div class="container mt-3">
+    <div class="graph-container text-center">
+        <canvas id="myChart" style="max-width: 600px; margin: 0 auto;"></canvas>
+    </div>
+    <div class="text-center mt-3">
+        <a href="@Url.Action("DSKhuyenMai", "QuanLyKhuyenMai")" class="btn btn-secondary">Quay lại</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const ctx = document.getElementById('myChart');
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['KM1', 'KM2', 'KM3', 'KM4','KM5','KM6'],
+      datasets: [{
+        label: 'Used',
+        data: [12, 19, 3, 5, 1, 1],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+
+<style>
+    .container {
+        width: 100%;
+        max-width: 800px; /* Chiều rộng tối đa của container */
+        margin: 0 auto; /* Căn giữa container */
+    }
+
+    .graph-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #myChart {
+        max-width: 100%; /* Đảm bảo biểu đồ không vượt quá chiều rộng của container */
+        height: 400px; /* Giới hạn chiều cao của biểu đồ */
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+</style>

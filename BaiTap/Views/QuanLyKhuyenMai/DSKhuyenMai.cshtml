@@ -1,96 +1,141 @@
-﻿@model IEnumerable<BaiTap.Models.KhuyenMai>
+﻿
+@using System.Runtime
+@model IEnumerable<BaiTap.Models.KhuyenMai>
 
 @{
-    ViewBag.Title = "DSKhuyenMai";
+    ViewBag.Title = "Danh Sách Khuyến Mãi";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<h2 class="text-center">Danh Sách Khuyến Mãi</h2>
 
-<h2>DSKhuyenMai</h2>
+<main id="main" class="main">
+    <div class="container">
+        <div class="pagetitle text-center">
+            <h1>Dashboard</h1>
+            <nav>
+                <ol class="breadcrumb justify-content-center">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
+                    <li class="breadcrumb-item active">Danh Sách Khuyến Mãi</li>
+                </ol>
+            </nav>
+        </div>
 
-
-<main id="main" class="main" style="width:100%">
-
-    <div class="pagetitle">
-        <h1>Dashboard</h1>
-        <nav>
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                <li class="breadcrumb-item active">Dashboard</li>
-            </ol>
-        </nav>
-    </div>
-    <section class="section dashboard">
-        <div class="row">
-            <div class="col-lg-8" style="width:1200px">
-                <table class="table">
-                    <tr>
-                        <th>
-                            Tên khuyến mãi
-                        </th>
-                        <th>
-                            mô tả
-                        </th>
-                        <th>
-                            ngày bắt đầu
-                        </th>
-                        <th>
-                            ngày kết thúc
-                        </th>
-                       
-                        <th>
-                           Giá trị(%)
-                        </th>
-                        <th>
-                            điều kiện
-                        </th>
-                        <th>
-                           Số lượng
-                        </th>
-                        <th></th>
-                    </tr>
-
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.TenKhuyenMai)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Mota)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.NgayBD)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.NgayKT)
-                            </td>                       
-                            <td>
-                                @Html.DisplayFor(modelItem => item.GiaTri)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.DieuKien)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Soluong)
-                            </td>
-                            <td>
-                                @Html.ActionLink("sửa", "SuaKM", new { id = item.KhuyenMaiID }) |
-                                @Html.ActionLink("Xóa", "XoaKhuyenMai", new { id = item.KhuyenMaiID }) |
-                                @Html.ActionLink("chi tiet","ChiTietKM", new {id = item.KhuyenMaiID})
-                            </td>
-                        </tr>
-                    }
-
-                </table>
-
+        <section class="section dashboard">
+            <div class="row justify-content-center">
+                <div class="col-lg-12">
+                    <div class="table-container">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Tên Khuyến Mãi</th>
+                                    <th>Mô Tả</th>
+                                    <th>Ngày Bắt Đầu</th>
+                                    <th>Ngày Kết Thúc</th>
+                                    <th>Giá Trị (%)</th>
+                                    <th>Điều Kiện</th>
+                                    <th>Số Lượng</th>
+                                    <th>Hành Động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@Html.DisplayFor(modelItem => item.TenKhuyenMai)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.Mota)</td>
+                                            <td>@item.NgayBD.ToString("dd/MM/yyyy")</td>
+                                            <td>@item.NgayKT.ToString("dd/MM/yyyy")</td>
+                                            <td>@Html.DisplayFor(modelItem => item.GiaTri)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.DieuKien)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.Soluong)</td>
+                                            <td>
+                                                <a href="@Url.Action("SuaKM", new { id = item.KhuyenMaiID })" class="btn btn-warning btn-sm">Sửa</a>
+                                                <a href="@Url.Action("XoaKhuyenMai", new { id = item.KhuyenMaiID })" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa khuyến mãi này?')">Xóa</a>
+                                                <a href="@Url.Action("ChiTietKM", new { id = item.KhuyenMaiID })" class="btn btn-info btn-sm">Chi Tiết</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="8" class="text-center">Không có khuyến mãi nào.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="form-actions no-color">
-            <a href="@Url.Action("TaoKhuyenMai","QuanLyKhuyenMai")" class="btn btn-default">Tao khuyen mai moi</a>
-        </div>
-    </section>
 
+            <div class="form-actions text-center">
+                <a href="@Url.Action("TaoKhuyenMai", "QuanLyKhuyenMai")" class="btn btn-primary">Tạo Khuyến Mãi</a>
+                <a href="@Url.Action("Graph", "QuanLyKhuyenMai")" class="btn btn-primary">Biểu Đồ Khuyến Mãi</a>
+            </div>
+        </section>
+    </div>
 </main>
 
+<style>
+    /* Center the entire page */
+    main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin-top: 20px;
+    }
 
+    .container {
+        width: 100%;
+        max-width: 1200px;
+        padding: 15px;
+        margin: 0 auto;
+    }
 
+    .table-container {
+        max-width: 100%;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .table {
+        width: 100%;
+        table-layout: fixed;
+        border: 1px solid #ddd;
+    }
+
+    th, td {
+        text-align: center;
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f4f4f4;
+    }
+
+    .form-actions {
+        margin-top: 20px;
+    }
+
+    tbody tr {
+        font-size: 14px;
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+
+    .btn-sm {
+        font-size: 12px;
+    }
+
+    .recent-sales {
+        margin-top: 40px;
+    }
+</style>

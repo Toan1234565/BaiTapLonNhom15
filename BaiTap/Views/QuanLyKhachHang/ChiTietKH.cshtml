@@ -1,4 +1,4 @@
-﻿﻿@model BaiTap.Models.KhachHang
+﻿@model BaiTap.Models.KhachHang
 
 @{
     ViewBag.Title = "Chi Tiết Khách Hàng";
@@ -22,111 +22,114 @@
     <section class="section dashboard">
         <div class="row">
             <div class="col-lg-8" style="width:1200px">
+               
+                    <h2>Chi Tiết Khách Hàng</h2>
 
-                <h2>Chi Tiết Khách Hàng</h2>
+                    <div>
+                        <h4>Khách Hàng</h4>
+                        <hr />
+                        <dl class="dl-horizontal">
+                            <dt>
+                                @Html.DisplayNameFor(model => model.HoTen)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.HoTen)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Email)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.Email)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.DiaChi)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.DiaChi)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.SoDienThoai)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.SoDienThoai)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.DiemTichLuy)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.DiemTichLuy)
+                            </dd>
+                        </dl>
+                    </div>
 
-                <div>
-                    <h4>Khách Hàng</h4>
-                    <hr />
-                    <dl class="dl-horizontal">
-                        <dt>
-                            @Html.DisplayNameFor(model => model.HoTen)
-                        </dt>
-                        <dd>
-                            @Html.DisplayFor(model => model.HoTen)
-                        </dd>
-                        <dt>
-                            @Html.DisplayNameFor(model => model.Email)
-                        </dt>
-                        <dd>
-                            @Html.DisplayFor(model => model.Email)
-                        </dd>
-                        <dt>
-                            @Html.DisplayNameFor(model => model.DiaChi)
-                        </dt>
-                        <dd>
-                            @Html.DisplayFor(model => model.DiaChi)
-                        </dd>
-                        <dt>
-                            @Html.DisplayNameFor(model => model.SoDienThoai)
-                        </dt>
-                        <dd>
-                            @Html.DisplayFor(model => model.SoDienThoai)
-                        </dd>
-                        <dt>
-                            @Html.DisplayNameFor(model => model.DiemTichLuy)
-                        </dt>
-                        <dd>
-                            @Html.DisplayFor(model => model.DiemTichLuy)
-                        </dd>
-                    </dl>
-                </div>
-
-                <h4>Tài Khoản Khách Hàng</h4>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>
-                                @Html.DisplayNameFor(model => model.TaiKhoanKH.First().TenDangNhap)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.TaiKhoanKH.First().MatKhau)
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.TaiKhoanKH)
-                        {
+                    <h4>Tài Khoản Khách Hàng</h4>
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.TenDangNhap)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.MatKhau)
-                                </td>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.TaiKhoanKH.First().TenDangNhap)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.TaiKhoanKH.First().MatKhau)
+                                </th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.TaiKhoanKH)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.TenDangNhap)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.MatKhau)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
 
-                <h4>Đơn Hàng</h4>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>
-                                @Html.DisplayNameFor(model => model.DonHang.First().NgayDatHang)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.DonHang.First().TongTien)
-                            </th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.DonHang)
-                        {
+                    <h4>Đơn Hàng</h4>
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.NgayDatHang)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.TongTien)
-                                </td>
-                                <td>
-                                    @Html.ActionLink("Chi tiết", "ChiTietDonHang", "QuanLyDonHang", new { id = item.DonHangID }, null)
-                                </td>
-
+                                <th>
+                                    @Html.DisplayNameFor(model => model.DonHang.First().NgayDatHang)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.DonHang.First().TongTien)
+                                </th>
+                                <th></th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.DonHang)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.NgayDatHang)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.TongTien)
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("Chi tiết", "ChiTietDonHang", "QuanLyDonHang", new { id = item.DonHangID }, null)
+                                    </td>
+                                    
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
 
 
-
+                
                 <a href="@Url.Action("DSKhachHang", "QuanLyKhachHang")" class="btn btn-default">Hủy</a>
             </div>
         </div>
-
+        
     </section>
 
 </main>
+
+
+
