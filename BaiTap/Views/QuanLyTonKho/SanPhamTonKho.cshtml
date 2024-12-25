@@ -65,6 +65,16 @@
                 </th>
             </tr>
             <tr>
+                <th style="padding-left:50px">
+                    @Html.ActionLink("tong quan", "BD1", "QuanLyTonKho")
+                </th>
+            </tr>
+            <tr>
+                <th style="padding-left:50px">
+                    @Html.ActionLink("Cảnh báo tồn kho ", "Check", "QuanLyTonKho")
+                </th>
+            </tr>
+            <tr>
                 <th>
                     Sắp xếp theo
                 </th>
@@ -149,6 +159,7 @@
                                                 @Html.DisplayFor(modelItem => item.SanPhamID)
                                             </td>
                                             <td>
+                                                
                                                 @Html.DisplayFor(modelItem => item.SanPham.TenSanPham)
                                             </td>
                                             <td>
@@ -186,7 +197,7 @@
 
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-primary xem view-button" data-id="@item.TonKhoID">Thong tin san pham</button>
+                                                <button type="button" class="btn btn-primary xem view-button" data-id="@item.SanPhamID">Chi Tiet</button>
                                                 <div class="modal fade" id="TT" tabindex="-1" role="dialog">
                                                     <div class="modal-dialog" role="document">
                                                         <div class="modal-content">
@@ -265,17 +276,9 @@
         });
 
         // Open the view modal and load product information
-        $('.view-button').click(function() {
-            var productId = $(this).data('id');
-            $.ajax({
-                url: '@Url.Action("XemThongTin", "QuanLyTonKho")/' + productId,
-                method: 'GET',
-                success: function(data) {
-                    $('#TT').find('.modal-body').html(data);
-                    $('#TT').modal('show');
-                }
-            });
-        });
+
+
+
         // Mở modal và tải nội dung thông qua AJAX
         $('.Themmoi').click(function() {
             $.ajax({
@@ -297,4 +300,18 @@
             $('#suaTonKhoForm').submit();
         });
     });
+    $(document).ready(function () {
+    // Open the view modal and load product information
+    $('.view-button').click(function () {
+        var productId = $(this).data('id');
+        $.ajax({
+            url: '@Url.Action("XemThongTin", "QuanLyTonKho")/' + productId,
+            method: 'GET',
+            success: function (data) {
+            $('#TT').find('.modal-body').html(data);
+            $('#TT').modal('show');
+            }
+        });
+    });
+});
 </script>

@@ -1,9 +1,64 @@
 ﻿@{
-    ViewBag.Title = "About";
+    ViewBag.Title = "Check Inventory Levels";
 }
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
+<main id="main" class="main" style="width:100%">
 
-    <p>Use this area to provide additional information.</p>
-</main>
+    <div class="pagetitle">
+        <h1>Dashboard</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+        </nav>
+    </div>
+    <section class="section dashboard">
+        <div class="row">
+            <div class="col-lg-8" style="width:1200px">
+
+                <form id="checkInventoryForm">
+                    <div>
+                        <label for="lowStockThreshold">Low Stock Threshold:</label>
+                        <input type="number" id="lowStockThreshold" name="lowStockThreshold" required />
+                    </div>
+                    <div>
+                        <label for="highStockThreshold">High Stock Threshold:</label>
+                        <input type="number" id="highStockThreshold" name="highStockThreshold" required />
+                    </div>
+                    <button type="button" onclick="checkInventory()">Check Inventory</button>
+                </form>
+
+                <div id="results" style="margin-top: 20px;"></div>
+                </div>
+            </div>
+        </section>
+        </main>
+
+                @section scripts {
+                    <script>
+                        function checkInventory() {
+                            var lowStockThreshold = document.getElementById('lowStockThreshold').value;
+                            var highStockThreshold = document.getElementById('highStockThreshold').value;
+
+                            fetch(`/api/inventory/check?lowStockThreshold=${lowStockThreshold}&highStockThreshold=${highStockThreshold}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    var resultsDiv = document.getElementById('results');
+                                    if (data.length === 0) {
+                                        resultsDiv.innerHTML = '<p>No products at alert levels.</p>';
+                                    } else {
+                                        var html = '<h3>Alert Products</h3><ul>';
+                                        data.forEach(product => {
+                                            html += `<li>${product.ProductName}: ${product.SoLuongTon}</li>`;
+                                        });
+                                        html += '</ul>';
+                                        resultsDiv.innerHTML = html;
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    document.getElementById('results').innerHTML = '<p>An error occurred while checking inventory.</p>';
+                                });
+                        }
+                    </script>
+                }

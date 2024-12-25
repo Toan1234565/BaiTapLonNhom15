@@ -22,10 +22,12 @@ namespace BaiTap.Controllers
         // GET: QuanLySanPham/DanhSach
         public async Task<ActionResult> SanPham()
         {
+            // gửi yêu cầu GET đến API máy chủ 
             HttpResponseMessage response = await client.GetAsync("https://localhost:44383/api/quanlysanpham/sanpham");
+
             if (response.IsSuccessStatusCode)
             {
-
+                // dọc dữ liệu dạng Json trả về từ API và chuyển vẻ danh sách sản phẩm 
                 var sanpham = await response.Content.ReadAsAsync<IEnumerable<SanPham>>();
                 if (sanpham != null)
                 {
@@ -55,7 +57,7 @@ namespace BaiTap.Controllers
             ViewBag.Thongbao = "loi khi gọi API.";
             return View("Error");
         }
-       
+
         // GET: QuanLySanPham/Them
         public ActionResult ThemSanPham()
         {
@@ -99,17 +101,20 @@ namespace BaiTap.Controllers
 
         // GET: QuanLySanPham/Sua/{id}
         // truy cap den San pham khi duoc kich vao 
-       
-        public async Task<ActionResult> Sua(int id)
+
+
+
+
+        public async Task<ActionResult> SuaThongTin(int id)
         {
-            HttpResponseMessage response = await client.GetAsync($"https://localhost:44383/api/quanlysanpham/sanpham/{id}");
+            HttpResponseMessage response = await client.GetAsync($"https://localhost:44383/api/quanlysanpham/suasanpham/{id}");
             if (response.IsSuccessStatusCode)
             {
                 var sanpham = await response.Content.ReadAsAsync<SanPham>();
 
                 if (sanpham != null)
                 {
-                    return PartialView("FromSua",sanpham);
+                    return PartialView("Sua", sanpham);
                 }
                 ViewBag.Thongbao = "Không tìm thấy sản phẩm với ID được cung cấp";
                 return View("Error");
@@ -120,22 +125,22 @@ namespace BaiTap.Controllers
 
         // POST: QuanLySanPham/Sua
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Sua(SanPham sanpham, TonKho tonkho)
+        public async Task<ActionResult> SuaThongTin(SanPham sanpham, int id)
         {
-            if (ModelState.IsValid)
+
+
+            HttpResponseMessage response = await client.PostAsJsonAsync($"https://localhost:44383/api/quanlysanpham/suasanpham{id}", sanpham);
+
+            if (response.IsSuccessStatusCode)
             {
-                var payload = new { SanPham = sanpham, TonKho = tonkho };
-                HttpResponseMessage response = await client.PutAsJsonAsync("https://localhost:44383/api/quanlysanpham/sua", payload);
-                if (response.IsSuccessStatusCode)
-                {
-                    return RedirectToAction("SanPham");
-                }
-                ViewBag.Thongbao = "loi";
-                return View("Error");
+                return RedirectToAction("SanPham");
             }
+            ViewBag.Thongbao = "cap nhat that bai";
             return View("Error");
+
+
         }
+        [HttpPost]
 
         // GET: QuanLySanPham/Xoa/{id}
         public async Task<ActionResult> Xoa(int id)

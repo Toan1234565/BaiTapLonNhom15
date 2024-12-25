@@ -45,7 +45,8 @@
         public int? SoLuongDaBan {
             get
             {
-                return Soluong.GetValueOrDefault() - TonKho.Sum(tk => tk.SoLuongTon) ;
+                //return Soluong.GetValueOrDefault() - TonKho.Sum(tk => tk.SoLuongTon) ;
+                return Soluong.HasValue ? (int?)Soluong.Value - (TonKho?.Sum(x => x.SoLuongTon) ?? 0) : null; 
             }
         }
 

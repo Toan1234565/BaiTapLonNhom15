@@ -4,8 +4,11 @@ using NLog;
 using System;
 using System.Data.Entity;
 using System.Linq;
+using System.Net.Mail;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Collections.Generic;
 
 namespace BaiTap.Controllers
 {
@@ -41,12 +44,10 @@ namespace BaiTap.Controllers
 
            
         }
-
         [HttpGet]
         [Route("locsanpham")]
-        public IHttpActionResult LocSP(string name = null, int? IDHang = null, int? IDDanhMuc = null, double? to = null, double? from = null, string sx = null)
+        public IHttpActionResult LocSP(string name = null, int? IDHang = null, int? IDDanhMuc = null, double? to = null, double? from = null, string sx = null, int page = 1, int pageSize = 10)
         {
-          
             try
             {
                 db.Configuration.ProxyCreationEnabled = false;
@@ -84,22 +85,36 @@ namespace BaiTap.Controllers
                         kq = kq.OrderBy(sp => sp.Gia);
                         break;
                 }
-                var result = kq.ToList();
-                if(result.Count == 0)
+
+                // Tính năng phân trang
+                var totalItems = kq.Count();
+                var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+                var pagedResult = kq.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+                if (pagedResult.Count == 0)
                 {
                     logger.Info("khong tim thay thong tin san pham thoa ma dieu kien loc");
                     return NotFound();
                 }
                 logger.Info("lay danh sach thanh cong");
-                return Ok(kq.ToList());
+
+                var response = new
+                {
+                    TotalItems = totalItems,
+                    TotalPages = totalPages,
+                    Items = pagedResult
+                };
+
+                return Ok(response);
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
-                logger.Error(ex,"lay danh sach that bai");
-                return InternalServerError(ex); 
+                logger.Error(ex, "lay danh sach that bai");
+                return InternalServerError(ex);
             }
-            
         }
+
+
 
         [HttpGet]
         [Route("giatang")]
@@ -153,36 +168,31 @@ namespace BaiTap.Controllers
 
         [HttpGet]
         [Route("SOSANH")]
-        public async Task<IHttpActionResult> Sosanh(int id1, int id2)
+        public async Task<IHttpActionResult> Sosanh([FromUri] int[] id)
         {
             try
             {
-                var sp1 = await db.SanPham.FirstOrDefaultAsync(x => x.SanPhamID == id1);
-                var sp2 = await db.SanPham.FirstOrDefaultAsync(x => x.SanPhamID == id2);
-
-                if (sp1 == null || sp2 == null)
+                if( id == null || id.Length < 2)
                 {
-                    return Json(new { success = false, message = "One or both products not found." });
+                    return BadRequest("khong hop le");
+                }
+                var sanpham = db.ChiTietSanPham.Where(p => id.Contains(p.ChiTietSanPhamID)).ToList();
+                if(sanpham.Count != id.Length)
+                {
+                    return NotFound();
+                }
+                var sosanhsp = new List<Dictionary<string, string>>();
+                foreach( var kvp in sanpham)
+                {
+                    var SoSanh = new Dictionary<string, string>
+                    {
+                        {"ma hinh", kvp.ManHinh }
+                    };
+                    sosanhsp.Add(SoSanh);
                 }
 
-                var comparisonResult = new
-                {
-                    sanpham1 = new
-                    {
-                        sp1.TenSanPham,
-                        sp1.Gia,
-                        sp1.MoTa
-                    },
-                    sanpham2 = new
-                    {
-                        sp2.TenSanPham,
-                        sp2.Gia,
-                        sp2.MoTa
-                    }
-                };
-
                 logger.Info("Comparison successful");
-                return Ok(new { success = true, comparisonResult });
+                return Ok(sosanhsp);
             }
             catch (Exception ex)
             {

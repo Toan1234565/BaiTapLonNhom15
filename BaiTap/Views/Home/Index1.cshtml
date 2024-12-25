@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "Check Inventory Levels";
+}
+
+<h2>Check Inventory Levels</h2>
+
+<form method="get" action="/api/inventory/check">
+    <div>
+        <label for="lowStockThreshold">Low Stock Threshold:</label>
+        <input type="number" id="lowStockThreshold" name="lowStockThreshold" required />
+    </div>
+    <div>
+        <label for="highStockThreshold">High Stock Threshold:</label>
+        <input type="number" id="highStockThreshold" name="highStockThreshold" required />
+    </div>
+    <button type="submit">Check Inventory</button>
+</form>
+
+@if (ViewBag.AlertProducts != null)
+{
+    <h3>Alert Products</h3>
+    <ul>
+        @foreach (var product in ViewBag.AlertProducts)
+        {
+            <li>@product.ProductName: @product.SoLuongTon</li>
+        }
+    </ul>
+}

@@ -1,55 +1,55 @@
-﻿using BaiTap.Models;
-using NLog;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web.Http;
+﻿//using BaiTap.Models;
+//using NLog;
+//using System;
+//using System.Collections.Generic;
+////using System.Data.Entity;
+//using System.Linq;
+//using System.Threading.Tasks;
+//using System.Web.Http;
 
-namespace BaiTap.Controllers
-{
-    [RoutePrefix("api/comparison")]
-    public class ComparisonApiController : ApiController
-    {
-        private Model1 db = new Model1();
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+//namespace BaiTap.Controllers
+//{
+//    [RoutePrefix("api/comparison")]
+//    public class ComparisonApiController : ApiController
+//    {
+//        private Model1 db = new Model1();
+//        private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        [HttpPost]
-        [Route("compare")]
-        public async Task<IHttpActionResult> CompareProducts([FromBody] ComparisonRequest request)
-        {
-            try
-            {
-                var sanpham = request.Sanpham;
-                var criteria = request.Criteria;
+//        [HttpPost]
+//        [Route("compare")]
+//        public async Task<IHttpActionResult> CompareProducts([FromBody] ComparisonRequest request)
+//        {
+//            try
+//            {
+//                var sanpham = request.Sanpham;
+//                var criteria = request.Criteria;
 
-                var sp = await db.SanPham
-                    .Where(x => sanpham.Contains(x.SanPhamID))
-                    .Select(x => new SanPham
-                    {
-                        SanPhamID = x.SanPhamID,
-                        TenSanPham = x.TenSanPham,
-                        Gia = x.Gia ?? 0,
-                        MoTa = x.MoTa,
-                        HinhAnh = x.HinhAnh
-                        // Add more fields as needed
-                    })
-                    .ToListAsync();
+//                var sp = await db.SanPham
+//                    .Where(x => sanpham.Contains(x.SanPhamID))
+//                    .Select(x => new SanPham
+//                    {
+//                        SanPhamID = x.SanPhamID,
+//                        TenSanPham = x.TenSanPham,
+//                        Gia = x.Gia ?? 0,
+//                        MoTa = x.MoTa,
+//                        HinhAnh = x.HinhAnh
+//                        // Add more fields as needed
+//                    })
+//                    .ToListAsync();
 
-                if (!sp.Any())
-                {
-                    return Json(new { success = false, message = "No products found." });
-                }
+//                if (!sp.Any())
+//                {
+//                    return Json(new { success = false, message = "No products found." });
+//                }
 
-                logger.Info("Comparison successful");
-                return Ok(new { success = true, data = sp });
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Comparison failed");
-                return InternalServerError(ex);
-            }
-        }
-    }
-}
+//                logger.Info("Comparison successful");
+//                return Ok(new { success = true, data = sp });
+//            }
+//            catch (Exception ex)
+//            {
+//                logger.Error(ex, "Comparison failed");
+//                return InternalServerError(ex);
+//            }
+//        }
+//    }
+//}
